@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-regex test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../eras-input-regex.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-regex-fixture'>
+    <template>
+      <eras-input-regex></eras-input-regex>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-regex', function () {
+      var el;
+
+      setup(function () {
+        el = fixture('eras-input-regex-fixture');
+      });
+      test('instantiation', function () {
+        assert.equal(el.is, 'eras-input-regex');
+      });
+    });
+
+  </script>
+</body>
+
+</html>

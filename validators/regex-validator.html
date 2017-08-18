@@ -1,0 +1,14 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../../iron-validator-behavior/iron-validator-behavior.html'>
+<script>
+  Polymer({
+    is: 'regex-validator',
+    behaviors: [
+      Polymer.IronValidatorBehavior
+    ],
+    validate: function (values) {
+      console.info('validating: ', JSON.stringify(values));
+    }
+  });
+
+</script>

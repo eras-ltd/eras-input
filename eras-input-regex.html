@@ -1,0 +1,38 @@
+<link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-validatable-behavior/iron-validatable-behavior.html'>
+<!--
+`eras-input-regex`
+@demo demo/eras-input-regex_demo.html
+-->
+<dom-module id='eras-input-regex'>
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+    <input id="input">
+  </template>
+  <script>
+    Polymer({
+      is: 'eras-input-regex',
+      properties: {
+        invalid: {
+          reflectToAttribute: true,
+          type: Boolean,
+          value: false
+        }
+      },
+      behaviors: [
+        Polymer.IronValidatableBehavior
+      ],
+      listeners: {
+        'input': '_onInput'
+      },
+      _onInput: function () {
+        console.log('input');
+        this.invalid = !this.validate(this.$.input.value);
+      }
+    });
+  </script>
+</dom-module>
