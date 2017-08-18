@@ -11,6 +11,8 @@
 
   <link rel='import' href='../../iron-demo-helpers/demo-pages-shared-styles.html'>
   <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
+  <link rel='import' href='../../iron-form/iron-form.html'>
+  <link rel='import' href='../../paper-button/paper-button.html'>
   <link rel='import' href='../eras-input-regex.html'>
   <link rel='import' href='../validators/regex-validator.html'>
 
@@ -25,10 +27,19 @@
   <div class='vertical-section-container centered'>
     <h3>Basic eras-input-regex demo</h3>
     <demo-snippet>
-      <template>
-        <regex-validator></regex-validator>
-        <eras-input-regex validator='regex-validator'></eras-input-regex>
+      <template is='dom-bind' id='app'>
+        <form is="iron-form" id='form'>
+          <regex-validator pattern='^[a-zA-Z]{3,6}$'></regex-validator>
+          <eras-input-regex name='some-name' validator='regex-validator'></eras-input-regex>
+          <paper-button raised on-tap='submit'>Submit</paper-button>
+        </form>
       </template>
+      <script>
+        var app = document.querySelector('#app');
+        app.submit = function () {
+          app.$.form.submit();
+        }
+      </script>
     </demo-snippet>
   </div>
 </body>
