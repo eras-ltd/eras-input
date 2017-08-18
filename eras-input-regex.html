@@ -1,4 +1,6 @@
 <link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-input/iron-input.html'>
 <link rel='import' href='../iron-validatable-behavior/iron-validatable-behavior.html'>
 <!--
 `eras-input-regex`
@@ -10,13 +12,17 @@
        :host {
         display: block;
       }
+      :host[invalid] input {
+        color: red;
+      }
     </style>
-    <input id="input">
+    <input id="input" is='iron-input' >
   </template>
   <script>
     Polymer({
       is: 'eras-input-regex',
       properties: {
+        // value: String,
         invalid: {
           reflectToAttribute: true,
           type: Boolean,
@@ -24,14 +30,16 @@
         }
       },
       behaviors: [
-        Polymer.IronValidatableBehavior
+        Polymer.IronValidatableBehavior,
+        Polymer.IronFormElementBehavior
       ],
       listeners: {
         'input': '_onInput'
       },
       _onInput: function () {
-        console.log('input');
-        this.invalid = !this.validate(this.$.input.value);
+        // console.log('input', this.value);
+        
+        // this.invalid = !this.validate(this.$.input.value);
       }
     });
   </script>
