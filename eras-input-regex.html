@@ -1,8 +1,19 @@
 <link rel='import' href='../polymer/polymer.html'>
 <link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
-<link rel='import' href='../iron-validatable-behavior/iron-validatable-behavior.html'>
+<link rel='import' href='../iron-input/iron-input.html'>
+<link rel='import' href='../paper-input/paper-input-container.html'>
 <!--
 `eras-input-regex`
+
+### Important:
+It looks like there is [some issues](https://github.com/PolymerElements/iron-form-element-behavior/issues/28) when trying to use `IronFormElementBehavior` togehter
+with `IronValidatableBehavior`. Basically the validate methods on `IronValidatorBehavior` elements used by `IronValidatableBehavior` requires the value to be validated 
+to be passed to it, where as the validate method specified by `IronFormElementBehavior` takes no arguments. So when `iron-form` tries to validate an element implementing 
+`IronValidatableBehavior` it never gets the value given to it. 
+
+It seems the only way round it is to drop the `IronValidatableBehavior` and `IronValidatorBehavior` combo all together and just implement the validate method (without any args)
+insed the element implementing `IronFormElementBehavior`... fun times!
+
 @demo demo/eras-input-regex_demo.html
 -->
 <dom-module id='eras-input-regex'>
@@ -15,12 +26,20 @@
         color: red;
       }
     </style>
-    <input id="input">
+
+    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}'>
+
+    </paper-input-container>
+
+    <input id="input" is='iron-input' name='{{name}}' bind-value='{{value}}'>
   </template>
   <script>
     Polymer({
       is: 'eras-input-regex',
       properties: {
+        value: String,
+        name: String,
+        pattern: String,
         invalid: {
           reflectToAttribute: true,
           type: Boolean,
@@ -28,13 +47,11 @@
         }
       },
       behaviors: [
-        Polymer.IronValidatableBehavior,
         Polymer.IronFormElementBehavior
       ],
-      listeners: {
-        'input': '_onInput'
-      },
-      _onInput: function () {
+      validate: function() {
+        this.invalid = !new RegExp(this.pattern).test(this.value);
+        return !this.invalid;
       }
     });
   </script>

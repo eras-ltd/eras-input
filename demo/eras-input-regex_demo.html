@@ -13,8 +13,8 @@
   <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
   <link rel='import' href='../../iron-form/iron-form.html'>
   <link rel='import' href='../../paper-button/paper-button.html'>
+  <link rel='import' href='../../paper-toast/paper-toast.html'>
   <link rel='import' href='../eras-input-regex.html'>
-  <link rel='import' href='../validators/regex-validator.html'>
 
   <style is='custom-style' include='demo-pages-shared-styles'>
     eras-input-regex {
@@ -29,16 +29,28 @@
     <demo-snippet>
       <template is='dom-bind' id='app'>
         <form is="iron-form" id='form'>
-          <regex-validator pattern='^[a-zA-Z]{3,6}$'></regex-validator>
-          <eras-input-regex name='some-name' validator='regex-validator'></eras-input-regex>
+          <eras-input-regex name='some-name' pattern='^[a-zA-Z]{3,6}$'></eras-input-regex>
           <paper-button raised on-tap='submit'>Submit</paper-button>
         </form>
+
+        <paper-toast id='ok' class="fit-bottom" text="The form was submitted!"></paper-toast>
+        <paper-toast id='invalid' class="fit-bottom" text="Oh no! Your data was invalid..."></paper-toast>
+
       </template>
       <script>
         var app = document.querySelector('#app');
         app.submit = function () {
           app.$.form.submit();
         }
+
+        window.addEventListener('WebComponentsReady', function () {
+          app.$.form.addEventListener('iron-form-invalid', function (e) {
+            app.$.invalid.open();
+          });
+          app.$.form.addEventListener('iron-form-submit', function (e) {
+            app.$.ok.open();
+          });
+        });
       </script>
     </demo-snippet>
   </div>
