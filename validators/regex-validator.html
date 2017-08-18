@@ -3,11 +3,16 @@
 <script>
   Polymer({
     is: 'regex-validator',
+    properties: {
+      pattern: String
+    },
     behaviors: [
       Polymer.IronValidatorBehavior
     ],
     validate: function (values) {
-      console.info('validating: ', JSON.stringify(values));
+      var valid = new RegExp(this.pattern).test(values);
+      console.info('validating', JSON.stringify(values), 'with', this.pattern, valid);
+      return valid;
     }
   });
 
