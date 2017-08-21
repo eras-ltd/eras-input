@@ -1,14 +1,27 @@
 <link rel='import' href='../../polymer/polymer.html'>
 <link rel='import' href='../eras-input-validator-behavior.html'>
+<!--
+`eras-input-regex-validator`
+@demo demo/eras-input-regex-validator_demo.html
+-->
 <script>
   Polymer({
     is: 'eras-input-regex-validator',
+    properties: {
+      /** The regex pattern to test the value against */
+      pattern: String
+    },
     behaviors: [
-      ErasInputValidatorBehavior
+      Eras.InputValidatorBehavior
     ],
+    /**
+     * Validates the `value` against `pattern`.
+     * @param {Object} value The value to check against `pattern`.
+     * @return {Boolean} true if `value` is a match, false if not.
+     */
     validate: function(value) {
-      console.info('Implementation: ', value);
-      return false;
+      this.invalid = !new RegExp(this.pattern).test(value);
+      return !this.invalid;
     }
   });
 </script>

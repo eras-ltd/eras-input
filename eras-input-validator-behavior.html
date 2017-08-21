@@ -1,14 +1,20 @@
 <script>
-  ErasInputValidatorBehavior = {
+  window.Eras = window.Eras || {};
+  Eras.InputValidatorBehavior = {
     properties: {
-      testValue: {
-        type: String,
-        value: 'Do I exist?'
-      }
+      invalid: {
+        reflectToAttribute: true,
+        type: Boolean,
+        value: false
+      },
     },
-    validate: function(value) {
-      console.info('Base: ', value);
-      return false;
+    /**
+     * Implement custom validation logic in this function.
+     * @param {Object} value The value to validate, could be anything.
+     * @return {Boolean} true if `value` is valid.
+     */
+    validate: function (value) {
     }
   }
+
 </script>

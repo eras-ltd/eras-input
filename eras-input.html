@@ -1,0 +1,133 @@
+<link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-icon/iron-icon.html'>
+<link rel='import' href='../iron-input/iron-input.html'>
+<link rel='import' href='../paper-input/paper-input-container.html'>
+<link rel='import' href='../paper-input/paper-input-error.html'>
+<link rel='import' href='../eras-input/validators/eras-input-regex-validator.html'>
+
+<!--
+`eras-input`
+
+### Important:
+It looks like there is [some issues](https://github.com/PolymerElements/iron-form-element-behavior/issues/28) when trying to use `IronFormElementBehavior` togehter
+with `IronValidatableBehavior`. Basically the validate methods on `IronValidatorBehavior` elements used by `IronValidatableBehavior` requires the value to be validated 
+to be passed to it, where as the validate method specified by `IronFormElementBehavior` takes no arguments. So when `iron-form` tries to validate an element implementing 
+`IronValidatableBehavior` it never gets the value given to it. 
+
+It seems the only way round it is to drop the `IronValidatableBehavior` and `IronValidatorBehavior` combo all together and just implement the validate method (without any args)
+insed the element implementing `IronFormElementBehavior`... fun times!
+
+@demo demo/eras-input_demo.html
+-->
+<dom-module id='eras-input'>
+  <template>
+    <style>
+       :host {
+        display: block;
+        padding-bottom: 10px;
+      }
+
+       :host([hidden]) {
+        display: none !important;
+      }
+
+      paper-input-container ::content iron-icon {
+        margin-right: 5px;
+      }
+    </style>
+    <!-- <iron-a11y-keys id='a11y' target='[[target]]' keys='enter' on-keys-pressed='onEnter'></iron-a11y-keys> -->
+    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_floatLabel}}'>
+      <template is='dom-if' if='{{icon}}'>
+        <iron-icon icon='{{icon}}' prefix></iron-icon>
+      </template>
+      <content id='content'></content>
+      <template is='dom-if' if='{{label}}'>
+        <label>{{label}}</label>
+      </template>
+      <input id='input' is='iron-input' on-blur='onBlur' on-focus='onFocus' name='{{name}}' bind-value='{{value}}' readonly$={{readonly}}
+        type$='{{type}}' autocomplete$='{{autocomplete}}' />
+      <paper-input-error>{{errorMessage}}</paper-input-error>
+    </paper-input-container>
+
+    <div id='validators'>
+      <slot name='validators'></slot>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'eras-input',
+      properties: {
+        /** The value of this input. */
+        value: {
+          type: String,
+          observer: '_valueChanged'
+        },
+
+        /** 
+         * The name of this input that will be associated with the value
+         * when submitted.
+         */
+        name: String,
+
+        /** The label to be used for this input. *Optional* */
+        label: String,
+
+        /** Name of the icon to prefix this input with. *Optional* */
+        icon: String,
+
+        /** The type of input, passed directly to the input element. */
+        type: {
+          type: String,
+          value: 'text'
+        },
+
+        /** The type of autocomplete to use, passed directly to the element */
+        autocomplete: {
+          type: String,
+          value: 'off'
+        },
+
+        /** The message to display when invalid. */
+        errorMessage: String,
+
+        /** Returns true if the value is invalid. */
+        invalid: {
+          reflectToAttribute: true,
+          type: Boolean,
+          value: false
+        },
+
+        /** Set to true to disable this input. */
+        disabled: {
+          reflectToAttribute: true,
+          type: Boolean,
+          value: false
+        },
+
+        /** Set to true to make this input readonly. */
+        readonly: {
+          reflectToAttribute: true,
+          type: Boolean,
+          value: false
+        },
+      },
+      behaviors: [
+        Polymer.IronFormElementBehavior
+      ],
+      validate: function () {
+        var validators = this.$.validators.childNodes;
+        console.log(validators);
+
+
+        // this.invalid = doSomeValidation();
+        this.invalid = true;
+        this.errorMessage = 'Uh oh!';
+        return !this.invalid;
+      },
+      _valueChanged: function (value) {
+        // if set to auto validate then call validate()
+      }
+    });
+  </script>
+</dom-module>
