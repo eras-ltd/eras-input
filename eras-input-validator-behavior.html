@@ -1,0 +1,14 @@
+<script>
+  ErasInputValidatorBehavior = {
+    properties: {
+      testValue: {
+        type: String,
+        value: 'Do I exist?'
+      }
+    },
+    validate: function(value) {
+      console.info('Base: ', value);
+      return false;
+    }
+  }
+</script>

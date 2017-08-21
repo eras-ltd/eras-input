@@ -1,0 +1,14 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../eras-input-validator-behavior.html'>
+<script>
+  Polymer({
+    is: 'eras-input-regex-validator',
+    behaviors: [
+      ErasInputValidatorBehavior
+    ],
+    validate: function(value) {
+      console.info('Implementation: ', value);
+      return false;
+    }
+  });
+</script>
