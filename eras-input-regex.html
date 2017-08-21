@@ -1,7 +1,8 @@
 <link rel='import' href='../polymer/polymer.html'>
 <link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-icon/iron-icon.html'>
 <link rel='import' href='../iron-input/iron-input.html'>
-<link rel='import' href='../paper-input/paper-input-container.html'>
+<link rel='import' href='eras-input.html'>
 <!--
 `eras-input-regex`
 
@@ -21,17 +22,21 @@ insed the element implementing `IronFormElementBehavior`... fun times!
     <style>
        :host {
         display: block;
+        padding-bottom: 10px;
       }
-      :host[invalid] input {
-        color: red;
+
+       :host([hidden]) {
+        display: none !important;
+      }
+
+      paper-input-container ::content iron-icon {
+        margin-right: 10px;
       }
     </style>
 
-    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}'>
+    <eras-input name='{{name}}' label='{{label}}' value='{{value}}' invalid$='{{invalid}}' disabled='{{disabled}}' ></eras-input>
 
-    </paper-input-container>
-
-    <input id="input" is='iron-input' name='{{name}}' bind-value='{{value}}'>
+    <!-- <input id="input" is='iron-input' name='{{name}}' bind-value='{{value}}'> -->
   </template>
   <script>
     Polymer({
@@ -39,17 +44,23 @@ insed the element implementing `IronFormElementBehavior`... fun times!
       properties: {
         value: String,
         name: String,
+        label: String,
         pattern: String,
         invalid: {
           reflectToAttribute: true,
           type: Boolean,
           value: false
-        }
+        },
+        disabled: {
+          reflectToAttribute: true,
+          type: Boolean,
+          value: false
+        },
       },
       behaviors: [
         Polymer.IronFormElementBehavior
       ],
-      validate: function() {
+      validate: function () {
         this.invalid = !new RegExp(this.pattern).test(this.value);
         return !this.invalid;
       }
