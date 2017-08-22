@@ -128,6 +128,11 @@ insed the element implementing `IronFormElementBehavior`... fun times!
           this.autoValidate = true;
       },
 
+      /**
+       * Gets the supplied validators as an array. 
+       * Validators must have a class of `.validator` to be picked up.
+       * @return {Element[]} Implementations of `Eras.InputValidatorBehavior`
+       */
       _getValidators: function () {
         return this.getContentChildren('#validators');
       },
