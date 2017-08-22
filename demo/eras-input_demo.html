@@ -13,8 +13,9 @@
   <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
   <link rel='import' href='../../iron-form/iron-form.html'>
   <link rel='import' href='../../paper-button/paper-button.html'>
-  <link rel='import' href='../../paper-toast/paper-toast.html'>
   <link rel='import' href='../eras-input.html'>
+  <link rel='import' href='../validators/eras-input-minlength-validator.html'>
+  <link rel='import' href='../validators/eras-input-maxlength-validator.html'>
 
   <style is='custom-style' include='demo-pages-shared-styles'>
     eras-input {
@@ -25,39 +26,22 @@
 
 <body>
   <div class='vertical-section-container centered'>
-    <h3>Basic eras-input demo</h3>
+    <h3>Min/Max length demo</h3>
     <demo-snippet>
-
-
-      <template is='dom-bind' id='app'>
-        <form is="iron-form" id='form'>
-          <eras-input name='foo' label='This is my label...' icon='icons:account-box'></eras-input>
-          <paper-button raised on-tap='submit'>Submit</paper-button>
-        </form>
-
-        <paper-toast id='ok' text="The form was submitted!"></paper-toast>
-        <paper-toast id='invalid' text="Oh no! Your data was invalid..."></paper-toast>
-
-      </template>
-      <script>
-        var app = document.querySelector('#app');
-        app.submit = function () {
-          app.$.form.submit();
-        }
-
-        window.addEventListener('WebComponentsReady', function () {
-          app.$.form.addEventListener('iron-form-invalid', function (e) {
-            console.log('invalid', e.detail);
-            app.$.invalid.open();
-          });
-          app.$.form.addEventListener('iron-form-submit', function (e) {
-            console.log('valid', e.detail);
-            app.$.ok.open();
-          });
-        });
-      </script>
-
-    </demo-snippet>
+        <template is='dom-bind' id='app'>
+          <form is='iron-form' id='form'>
+            <eras-input name='foo' label='Enter 5-10 characters' icon='icons:code'>
+              <eras-input-minlength-validator class='validator' minlength='5' message='You must enter at least 5 characters'></eras-input-minlength-validator>
+              <eras-input-maxlength-validator class='validator' maxlength='10' message='You may not enter more than 10 characters'></eras-input-maxlength-validator>
+            </eras-input>
+            <paper-button raised on-tap='_submit'>Submit</paper-button>
+          </form>
+        </template>
+        <script>
+          var app = document.querySelector('#app');
+          app._submit = function () { form.submit(); }
+        </script>
+      </demo-snippet>
   </div>
 </body>
 

@@ -27,7 +27,6 @@ If a value is required then you must also supply an
      * @return {Boolean} true if it's long enough.
      */
     validate: function(value) {
-      console.info('validating...', '\''+value+'\'');
       if(value === undefined)
         this.invalid = false;
       else if(value === null)
