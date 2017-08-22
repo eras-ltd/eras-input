@@ -36,6 +36,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         margin-right: 5px;
       }
     </style>
+    <content id='validators' select='.validator'></content>
     <!-- <iron-a11y-keys id='a11y' target='[[target]]' keys='enter' on-keys-pressed='onEnter'></iron-a11y-keys> -->
     <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_floatLabel}}'>
       <template is='dom-if' if='{{icon}}'>
@@ -45,14 +46,10 @@ insed the element implementing `IronFormElementBehavior`... fun times!
       <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>
       </template>
-      <input id='input' is='iron-input' on-blur='onBlur' on-focus='onFocus' name='{{name}}' bind-value='{{value}}' readonly$={{readonly}}
+      <input id='input' is='iron-input' on-blur='_onBlur' on-focus='_onFocus' name='{{name}}' bind-value='{{value}}' readonly$={{readonly}}
         type$='{{type}}' autocomplete$='{{autocomplete}}' />
       <paper-input-error>{{errorMessage}}</paper-input-error>
     </paper-input-container>
-
-    <div id='validators'>
-      <slot name='validators'></slot>
-    </div>
   </template>
   <script>
     Polymer({
@@ -98,6 +95,15 @@ insed the element implementing `IronFormElementBehavior`... fun times!
           value: false
         },
 
+        /**  
+         * States whether or not the value will be vaildated upon every change.
+         * Gets set to true in `ready()` and `_onBlur()`
+         */
+        autoValidate: {
+          type: Boolean,
+          value: false
+        },
+
         /** Set to true to disable this input. */
         disabled: {
           reflectToAttribute: true,
@@ -112,21 +118,67 @@ insed the element implementing `IronFormElementBehavior`... fun times!
           value: false
         },
       },
+
       behaviors: [
         Polymer.IronFormElementBehavior
       ],
-      validate: function () {
-        var validators = this.$.validators.childNodes;
-        console.log(validators);
 
-
-        // this.invalid = doSomeValidation();
-        this.invalid = true;
-        this.errorMessage = 'Uh oh!';
-        return !this.invalid;
+      ready: function () {
+        if (this.value !== undefined && this.value.length > 0)
+          this.autoValidate = true;
       },
+
+      _getValidators: function () {
+        return this.getContentChildren('#validators');
+      },
+
+      /**
+       * Validates the current value of the input against
+       * all supplied validators.
+       * @return {Boolean} false if invalid, true if not
+       */
+      validate: function () {
+        var validators = this._getValidators();
+
+        for (var i = 0; i < validators.length; i++) {
+          if (!validators[i].validate(this.value)) {
+            this.invalid = true;
+            this.errorMessage = validators[i].message;
+            return false; // not valid
+          }
+        }
+
+        this.invalid = false;
+        return true; // if all validators passed
+      },
+
+      /**
+       * If `autoValidate` is set to true then calls `validate()` 
+       * on every change to `value`
+       * @param {Object} value       
+       */
       _valueChanged: function (value) {
-        // if set to auto validate then call validate()
+        if (this.autoValidate)
+          this.validate();
+      },
+
+      /**
+       * Called when the user focuses on this element. 
+       * Copies attributes from the validators to the input.
+       */
+      _onFocus: function () {
+        var validators = this._getValidators();
+        for (var i = 0; i < validators.length; i++) 
+          validators[i].copyAttributes(this.$.input);
+      },
+
+      /**
+       * Called when the user clicks off this element. 
+       * Sets `autoValidate` to true and calls `validate()`.
+       */
+      _onBlur: function () {
+        this.autoValidate = true;
+        this.validate();
       }
     });
   </script>

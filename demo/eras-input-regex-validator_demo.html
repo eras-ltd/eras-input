@@ -40,8 +40,8 @@
           }
         </style>
         <form is='iron-form' id='form'>
-          <eras-input name='foo' label='Enter text here' icon='icons:settings-ethernet'>
-            <eras-input-regex-validator pattern='^[a-zA-Z]{3,6}$'></eras-input-regex-validator>
+          <eras-input name='foo' label='Enter foo or bar' value='blah' icon='icons:settings-ethernet'>
+            <eras-input-regex-validator class='validator' pattern="^(foo|bar)$" message='You entered something else'></eras-input-regex-validator>
           </eras-input>
           <button type='submit' class='no-style'>
             <paper-button raised>Submit</paper-button>
