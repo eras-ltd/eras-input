@@ -13,7 +13,6 @@
   <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
   <link rel='import' href='../../iron-form/iron-form.html'>
   <link rel='import' href='../../paper-button/paper-button.html'>
-  <link rel='import' href='../../paper-toast/paper-toast.html'>
   <link rel='import' href='../validators/eras-input-regex-validator.html'>
   <link rel='import' href='../eras-input.html'>
 
@@ -35,31 +34,10 @@
           </eras-input>
           <paper-button raised on-tap='_submit'>Submit</paper-button>
         </form>
-
-        <paper-toast id='ok' text='The form was submitted!'></paper-toast>
-        <paper-toast id='invalid' text='Oh no! Your data was invalid...'></paper-toast>
-
       </template>
       <script>
         var app = document.querySelector('#app');
-
-        app._submit = function () {
-          form.submit();
-        }
-
-        window.addEventListener('WebComponentsReady', function () {
-          app.$.form.addEventListener('iron-form-presubmit', function (e) {
-            console.log('presubmit', e.detail);
-          });
-          app.$.form.addEventListener('iron-form-invalid', function (e) {
-            console.log('invalid', e.detail);
-            app.$.invalid.open();
-          });
-          app.$.form.addEventListener('iron-form-submit', function (e) {
-            console.log('valid', e.detail);
-            app.$.ok.open();
-          });
-        });
+        app._submit = function () { form.submit(); }
       </script>
     </demo-snippet>
   </div>
