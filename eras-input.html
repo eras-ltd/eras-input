@@ -47,7 +47,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         <label>{{label}}</label>
       </template>
       <input id='input' is='iron-input' on-blur='_onBlur' on-focus='_onFocus' name='{{name}}' bind-value='{{value}}' readonly$={{readonly}}
-        type$='{{type}}' autocomplete$='{{autocomplete}}' />
+        type$='{{type}}' autocomplete$='{{autocomplete}}' prevent-invalid-input$='_preventInvalidInput' allowed-pattern$='{{allowedPattern}}' />
       <paper-input-error>{{errorMessage}}</paper-input-error>
     </paper-input-container>
   </template>
@@ -84,6 +84,18 @@ insed the element implementing `IronFormElementBehavior`... fun times!
           type: String,
           value: 'off'
         },
+
+        /**
+         * Use this to only allow users to enter certain characters.
+         * @type {String} regex style pattern to specify allowed characters (e.g. [0-9] or [a-zA-Z])
+         */
+         allowedPattern: String,
+
+         /** Computed value that states whether invalid input should be prevented. */
+         _preventInvalidInput: {
+           type: Boolean,
+           computed: '_computePreventInvalidInput(allowedPattern)'
+         },
 
         /** The message to display when invalid. */
         errorMessage: String,
@@ -184,6 +196,17 @@ insed the element implementing `IronFormElementBehavior`... fun times!
       _onBlur: function () {
         this.autoValidate = true;
         this.validate();
+      },
+
+      /**
+       * Computes `_preventInvalidInput`
+       * @return {Boolean} true if invalid input will be prevented
+       */
+      _computePreventInvalidInput: function(allowedPattern) {
+        if(allowedPattern)
+          return true;
+        else 
+          return false;
       }
     });
   </script>
