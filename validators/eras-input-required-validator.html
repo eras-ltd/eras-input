@@ -1,0 +1,31 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../eras-input-validator-behavior.html'>
+<!--
+`eras-input-required-validator`
+
+@demo demo/eras-input-required-validator_demo.html
+-->
+<script>
+  Polymer({
+    is: 'eras-input-required-validator',
+    behaviors: [
+      Eras.InputValidatorBehavior
+    ],
+    
+    /**
+     * Ensures a value is provided.
+     * @param {Object} value The value to check.
+     * @return {Boolean} true if there is a value.
+     */
+    validate: function(value) {
+      if(value === undefined)
+        this.invalid = true;
+      else if(value === null)
+        this.invalid = true;
+      else
+        this.invalid = !(value.toString());
+
+      return !this.invalid;
+    }
+  });
+</script>
