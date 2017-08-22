@@ -2,6 +2,12 @@
 <link rel='import' href='../eras-input-validator-behavior.html'>
 <!--
 `eras-input-regex-validator`
+
+Validates a value against the specified regular expression. 
+If no value is supplied then it will return true (valid).
+If a value is required then you must also supply an
+`eras-input-required-validator` to enforce that.
+
 @demo demo/eras-input-regex-validator_demo.html
 -->
 <script>
@@ -14,13 +20,14 @@
     behaviors: [
       Eras.InputValidatorBehavior
     ],
+    
     /**
      * Validates the `value` against `pattern`.
      * @param {Object} value The value to check against `pattern`.
      * @return {Boolean} true if `value` is a match, false if not.
      */
     validate: function(value) {
-      this.invalid = !new RegExp(this.pattern).test(value);
+      this.invalid = value !== undefined && value.length > 0 && !new RegExp(this.pattern).test(value);
       return !this.invalid;
     }
   });
