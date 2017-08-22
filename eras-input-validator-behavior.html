@@ -2,19 +2,31 @@
   window.Eras = window.Eras || {};
   Eras.InputValidatorBehavior = {
     properties: {
+      /** Returns true if the value is invalid. */
       invalid: {
         reflectToAttribute: true,
         type: Boolean,
         value: false
       },
+
+      /** Message to display if the value is invalid. */
+      message: String,      
     },
+
     /**
      * Implement custom validation logic in this function.
      * @param {Object} value The value to validate, could be anything.
      * @return {Boolean} true if `value` is valid.
      */
     validate: function (value) {
-    }
+    },
+
+    /**
+     * Implement logic to copy attributes to the input in this function.
+     * @param {Element} element The element to copy the attrubutes to
+     */
+     copyAttributes: function(element) {       
+     }
   }
 
 </script>
