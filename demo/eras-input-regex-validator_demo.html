@@ -29,23 +29,11 @@
     <h3>Basic eras-input-regex-validator demo</h3>
     <demo-snippet>
       <template is='dom-bind' id='app'>
-        <style>
-          button.no-style {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            border: 0;
-            padding: 0;
-            background: transparent;
-          }
-        </style>
         <form is='iron-form' id='form'>
           <eras-input name='foo' label='Enter foo or bar' value='blah' icon='icons:settings-ethernet'>
             <eras-input-regex-validator class='validator' pattern="^(foo|bar)$" message='You entered something else'></eras-input-regex-validator>
           </eras-input>
-          <button type='submit' class='no-style'>
-            <paper-button raised>Submit</paper-button>
-          </button>
+          <paper-button raised on-tap='_submit'>Submit</paper-button>
         </form>
 
         <paper-toast id='ok' text='The form was submitted!'></paper-toast>
