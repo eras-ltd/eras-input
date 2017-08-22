@@ -26,6 +26,14 @@
         this.invalid = !(value.toString());
 
       return !this.invalid;
+    },
+    
+    /**
+     * Adds the `required` attribute to the input
+     * @param {Element} element input
+     */
+    copyAttributes: function(element) {
+      element.setAttribute('required', '')
     }
   });
 </script>
