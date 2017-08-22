@@ -1,21 +1,25 @@
 <link rel='import' href='../../polymer/polymer.html'>
 <link rel='import' href='../eras-input-validator-behavior.html'>
 <!--
-`eras-input-required-validator`
+`eras-input-minlength-validator`
 
-@demo demo/eras-input-required-validator_demo.html
+@demo demo/eras-input-minlength-validator_demo.html
 -->
 <script>
   Polymer({
-    is: 'eras-input-required-validator',
+    is: 'eras-input-minlength-validator',
+    properties: {
+      /** The minimum allowed length. */
+      minlength: Number
+    },
     behaviors: [
       Eras.InputValidatorBehavior
     ],
     
     /**
-     * Ensures a value is provided.
+     * Ensures the value is at least as long as specified in `minlength`.
      * @param {Object} value The value to check.
-     * @return {Boolean} true if there is a value.
+     * @return {Boolean} true if it's long enough.
      */
     validate: function(value) {
       if(value === undefined)
@@ -23,17 +27,17 @@
       else if(value === null)
         this.invalid = true;
       else
-        this.invalid = !(value.toString());
+        this.invalid = value.toString().length < this.minlength;
 
       return !this.invalid;
     },
     
     /**
-     * Adds the `required` attribute to the input
+     * Adds the `minlength` attribute to the input
      * @param {Element} element input
      */
     copyAttributes: function(element) {
-      Polymer.dom(element).setAttribute('required', '');
+      Polymer.dom(element).setAttribute('minlength', this.minlength);
     }
   });
 </script>

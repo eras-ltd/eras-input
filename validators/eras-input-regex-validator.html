@@ -17,6 +17,7 @@ If a value is required then you must also supply an
       /** The regex pattern to test the value against */
       pattern: String
     },
+    
     behaviors: [
       Eras.InputValidatorBehavior
     ],
@@ -29,6 +30,6 @@ If a value is required then you must also supply an
     validate: function(value) {
       this.invalid = value !== undefined && value.length > 0 && !new RegExp(this.pattern).test(value);
       return !this.invalid;
-    }
+    }    
   });
 </script>

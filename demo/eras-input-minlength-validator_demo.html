@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-minlength-validator demo</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+
+  <link rel='import' href='../../iron-demo-helpers/demo-pages-shared-styles.html'>
+  <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
+  <link rel='import' href='../../iron-form/iron-form.html'>
+  <link rel='import' href='../../paper-button/paper-button.html'>
+  <link rel='import' href='../eras-input.html'>
+  <link rel='import' href='../validators/eras-input-minlength-validator.html'>  
+
+  <style is='custom-style' include='demo-pages-shared-styles'>
+    eras-input-minlength-validator {
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class='vertical-section-container centered'>
+    <h3>Basic eras-input-minlength-validator demo</h3>
+    <demo-snippet>
+        <template is='dom-bind' id='app'>
+          <form is='iron-form' id='form'>
+            <eras-input name='foo' label='Enter 5 characters' icon='icons:accessibility'>
+              <eras-input-minlength-validator class='validator' minlength='5' message='You must enter at least 5 characters'></eras-input-minlength-validator>
+            </eras-input>
+            <paper-button raised on-tap='_submit'>Submit</paper-button>
+          </form>
+        </template>
+        <script>
+          var app = document.querySelector('#app');
+          app._submit = function () { form.submit(); }
+        </script>
+      </demo-snippet>
+  </div>
+</body>
+
+</html>
