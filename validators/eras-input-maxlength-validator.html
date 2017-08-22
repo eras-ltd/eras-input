@@ -1,0 +1,49 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../eras-input-validator-behavior.html'>
+<!--
+`eras-input-maxlength-validator`
+
+Checks if the value is longer than the specified `maxlength`. 
+If no value is supplied then it will return true (valid).
+If a value is required then you must also supply an
+`eras-input-required-validator` to enforce that.
+
+@demo demo/eras-input-maxlength-validator_demo.html
+-->
+<script>
+  Polymer({
+    is: 'eras-input-maxlength-validator',
+    properties: {
+      /** The maximum allowed length. */
+      maxlength: Number
+    },
+    behaviors: [
+      Eras.InputValidatorBehavior
+    ],
+    
+    /**
+     * Ensures the value is no longer than specified in `maxlength`.
+     * @param {Object} value The value to check.
+     * @return {Boolean} true if it's long enough.
+     */
+    validate: function(value) {
+      console.info('validating...', '\''+value+'\'');
+      if(value === undefined)
+        this.invalid = false;
+      else if(value === null)
+        this.invalid = false;
+      else
+        this.invalid = value.toString().length > this.maxlength;
+
+      return !this.invalid;
+    },
+    
+    /**
+     * Adds the `maxlength` attribute to the input
+     * @param {Element} element input
+     */
+    copyAttributes: function(element) {
+      Polymer.dom(element).setAttribute('maxlength', this.maxlength);
+    }
+  });
+</script>

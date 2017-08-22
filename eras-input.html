@@ -47,7 +47,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         <label>{{label}}</label>
       </template>
       <input id='input' is='iron-input' on-blur='_onBlur' on-focus='_onFocus' name='{{name}}' bind-value='{{value}}' readonly$={{readonly}}
-        type$='{{type}}' autocomplete$='{{autocomplete}}' prevent-invalid-input$='_preventInvalidInput' allowed-pattern$='{{allowedPattern}}' />
+        type$='{{type}}' autocomplete$='{{autocomplete}}' prevent-invalid-input$='{{_preventInvalidInput}}' allowed-pattern$='{{allowedPattern}}' />
       <paper-input-error>{{errorMessage}}</paper-input-error>
     </paper-input-container>
   </template>

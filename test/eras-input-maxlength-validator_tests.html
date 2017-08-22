@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, maximum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-maxlength-validator test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../validators/eras-input-maxlength-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-maxlength-validator-fixture'>
+    <template>
+      <eras-input-maxlength-validator></eras-input-maxlength-validator>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-maxlength-validator', function () {
+      var el;
+
+      setup(function () {
+        el = fixture('eras-input-maxlength-validator-fixture');
+      });
+
+      test('instantiation', function () {
+        assert.equal(el.is, 'eras-input-maxlength-validator');
+      });
+
+      suite('validate', function () {
+        setup(function(){
+          el.maxlength = 2;
+        });
+
+        var dataTest = function (value, expected) {
+          return function (done) {
+            var actual = el.validate(value);
+            assert.equal(expected, actual, 'expected \'' + value + '\' to be ' + (expected ? 'valid' : 'invalid'));
+            assert.equal(!expected, el.invalid, 'expected `invalid` to have been set to ' + !expected);
+            done();
+          };
+        };
+
+        var data = [
+          { name: 'a', value: 'a', expected: true },
+          { name: 'ab', value: 'ab', expected: true },
+          { name: 'abc', value: 'abc', expected: false },
+          { name: 'abcd', value: 'abcd', expected: false },
+          { name: 'undefined', value: undefined, expected: true },
+          { name: 'null', value: null, expected: true },
+          { name: '', value: '', expected: true },
+        ];
+
+        for (var i = 0; i < data.length; i++)
+          test(data[i].name, dataTest(data[i].value, data[i].expected));
+      });
+    });
+  </script>
+</body>
+
+</html>
