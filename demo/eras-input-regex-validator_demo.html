@@ -11,8 +11,6 @@
 
   <link rel='import' href='../../iron-demo-helpers/demo-pages-shared-styles.html'>
   <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
-  <link rel='import' href='../../iron-form/iron-form.html'>
-  <link rel='import' href='../../paper-button/paper-button.html'>  
   <link rel='import' href='../eras-input.html'>
   <link rel='import' href='../validators/eras-input-regex-validator.html'>
 
@@ -27,18 +25,11 @@
   <div class='vertical-section-container centered'>
     <h3>Basic eras-input-regex-validator demo</h3>
     <demo-snippet>
-      <template is='dom-bind' id='app'>
-        <form is='iron-form' id='form'>
-          <eras-input name='foo' label='Enter foo or bar'>
-            <eras-input-regex-validator class='validator' pattern="^(foo|bar)$" message='You entered something else'></eras-input-regex-validator>
-          </eras-input>
-          <paper-button raised on-tap='_submit'>Submit</paper-button>
-        </form>
+      <template>
+        <eras-input name='foo' label='Enter foo or bar'>
+          <eras-input-regex-validator class='validator' pattern="^(foo|bar)$" message='You entered something else'></eras-input-regex-validator>
+        </eras-input>
       </template>
-      <script>
-        var app = document.querySelector('#app');
-        app._submit = function () { form.submit(); }
-      </script>
     </demo-snippet>
   </div>
 </body>
