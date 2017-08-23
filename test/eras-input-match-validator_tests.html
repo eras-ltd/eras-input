@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-match-validator test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../../iron-form/iron-form.html'>
+  <link rel='import' href='../eras-input.html'>
+  <link rel='import' href='../validators/eras-input-match-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-match-validator-fixture'>
+    <template>
+      <form id='form' is='iron-form'>
+        <eras-input id='input-1' name='input-1'>
+          <eras-input-match-validator class='validator' id='validator-1' other-name='input-2' message='ERROR'></eras-input-match-validator>
+        </eras-input>
+        <eras-input id='input-2' name='input-2'>
+          <eras-input-match-validator class='validator' id='validator-2' other-name='input-1' message='ERROR'></eras-input-match-validator>
+        </eras-input>
+        <div id='something-else'></div>
+      </form>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-match-validator', function () {
+      var el;
+      var input1;
+      var input2;
+      var validator1;
+      var validator2;
+      var inputSpy1;
+      var inputSpy2;
+      var validatorSpy1;
+      var validatorSpy2;
+
+      setup(function () {
+        el = fixture('eras-input-match-validator-fixture');
+        input1 = el.querySelector('#input-1');
+        input2 = el.querySelector('#input-2');
+        validator1 = el.querySelector('#validator-1');
+        validator2 = el.querySelector('#validator-2');
+        inputSpy1 = sinon.spy(input1, 'validate');
+        inputSpy2 = sinon.spy(input2, 'validate');
+        validatorSpy1 = sinon.spy(validator1, 'validate');
+        validatorSpy2 = sinon.spy(validator2, 'validate');
+
+        // console.info(el, input1, input2, validator1, validator2);
+      });
+
+      teardown(function () {
+        input1.validate.restore();
+        input2.validate.restore();
+        validator1.validate.restore();
+        validator2.validate.restore();
+      });
+
+      test('find form', function () {
+        var form = validator1._getParentForm();
+        assert.equal('iron-form', form.is, 'expected to find `iron-form`');
+      });
+
+      test('find other input', function () {
+        var expected = input2;
+        var actual = validator1._getOtherInput();
+        assert.equal('eras-input', actual.is, 'expected to find `eras-input`');
+        assert.equal(expected, actual, 'expected other input to be returned');
+      });
+
+      suite('validation', function () {
+
+        var dataTest = function (val1, val2, expected) {
+          return function (done) {
+            input1.value = val1;
+            input2.value = val2;
+            var valid1 = input1.validate();
+            var valid2 = input2.validate();
+            assert.equal(expected, valid1, 'expected #input-1 to be ' + (expected ? 'valid' : 'invalid'));
+            assert.equal(expected, valid2, 'expected #input-2 to be ' + (expected ? 'valid' : 'invalid'));
+            done();
+          }
+        }
+
+        var data = [
+          { name: 'number match', val1: 0, val2: 0, expected: true },
+          { name: 'number miss-match', val1: 0, val2: 1, expected: false },
+          { name: 'alpha match', val1: 'abc', val2: 'abc', expected: true },
+          { name: 'alpha miss-match', val1: 'abc', val2: 'def', expected: false },
+          { name: 'alpha/number match', val1: '0', val2: 0, expected: true },
+          { name: 'undefined', val1: 'abc', val2: undefined, expected: false },
+          { name: 'null', val1: 'abc', val2: null, expected: false },
+        ];
+
+        for (var i = 0; i < data.length; i++)
+          test(data[i].name, dataTest(data[i].val1, data[i].val2, data[i].expected));
+      });
+
+      test('blur', function (done) {
+        var value1 = 'abc';
+        var value2 = 'def';
+
+        MockInteractions.focus(input1.$.input);
+        input1.value = value1;
+        MockInteractions.blur(input1.$.input);
+
+        MockInteractions.focus(input2.$.input);
+        input2.value = value2;
+        MockInteractions.blur(input2.$.input);
+
+        assert.equal(true, input1.invalid, 'expected `#input-1` to be invalid');
+        assert.equal(true, input2.invalid, 'expected `#input-2` to be invalid');
+        assert(inputSpy1.calledOnce, 'expected `#input-1.validate()` to have been called once');
+        assert(inputSpy2.calledOnce, 'expected `#input-2.validate()` to have been called once');
+        assert(validatorSpy1.withArgs(value1).calledOnce, 'expected `#validator-1.validate(' + value1 + ')` to have been called once, not with ' + JSON.stringify(validatorSpy1.args[0]));
+        assert(validatorSpy2.withArgs(value2).calledOnce, 'expected `#validator-2.validate(' + value2 + ')` to have been called once, not with ' + JSON.stringify(validatorSpy2.args[0]));
+
+        done();
+      });
+
+      /**
+       * The first input should be revalidated after the
+       * second input has been succcessfully validated.
+       */
+      test('re-validate first', function (done) {
+        var value1 = 'abc';
+        var value2 = 'abc';
+
+        MockInteractions.focus(input1.$.input);
+        input1.value = value1;
+        MockInteractions.blur(input1.$.input);
+
+        MockInteractions.focus(input2.$.input);
+        input2.value = value2;
+        MockInteractions.blur(input2.$.input);
+
+        assert.equal(false, input1.invalid, 'expected `#input-1` to be valid');
+        assert.equal(false, input2.invalid, 'expected `#input-2` to be valid');
+        assert(inputSpy1.calledTwice, 'expected `#input-1.validate()` to have been called twice');
+        assert(inputSpy2.calledOnce, 'expected `#input-2.validate()` to have been called once');
+        assert(validatorSpy1.withArgs(value1).calledTwice, 'expected `#validator-1.validate(' + value1 + ')` to have been called twice, not with ' + JSON.stringify(validatorSpy1.args[0]));
+        assert(validatorSpy2.withArgs(value2).calledOnce, 'expected `#validator-2.validate(' + value2 + ')` to have been called once, not with ' + JSON.stringify(validatorSpy2.args[0]));
+
+        done();
+      });
+    });
+  </script>
+</body>
+
+</html>

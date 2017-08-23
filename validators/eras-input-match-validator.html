@@ -1,0 +1,78 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../eras-input-validator-behavior.html'>
+<!--
+`eras-input-match-validator`
+
+Used to ensure that the value of one input matches the value of another. For example, when specifying a new password
+the user should enter it twice to prevent typos.
+
+@demo demo/eras-input-match-validator_demo.html
+-->
+<script>
+  Polymer({
+    is: 'eras-input-match-validator',
+    properties: {
+      /** The **name** of the other input. */
+      otherName: String
+    },
+    behaviors: [
+      Eras.InputValidatorBehavior
+    ],
+
+    /**
+     * Ensures a value is provided.
+     * @param {Object} value The value to check.
+     * @return {Boolean} true if there is a value.
+     */
+    validate: function (value) {
+      var otherInput = this._getOtherInput();
+      if(!otherInput)
+        console.warn('the other input could not be found, validation will not occur')
+
+      this.invalid = otherInput.value != value;
+
+      if(!this.invalid && otherInput.invalid && otherInput.validate)
+        otherInput.validate(otherInput.value);
+
+      return !this.invalid;
+    },
+
+    /**
+     * Finds the first parent form of this input.
+     * Walks up the DOM until it finds a form element.
+     * @return {Element} form
+     */
+    _getParentForm: function () {
+      var parent = this.parentNode;
+
+      while (parent.nodeName != 'FORM' && parent.nodeName != 'HTML')
+        parent = parent.parentNode;
+
+      if (parent.nodeName === 'FORM')
+        return parent;
+      else
+        console.warn('Parent form could not be found');
+    },
+
+    /**
+     * Gets the other input by it's name attribute.
+     * @return {Element} input
+     */
+    _getOtherInput: function () {
+      var input;
+      var form = this._getParentForm();
+      var selector = '[name=\'' + this.otherName + '\']';
+
+      // first check the parent form, if it could be found
+      if (form)
+        input = form.querySelector(selector);
+
+      // then check the rest of the document
+      if (!input)
+        input = document.querySelector(selector);
+
+      return input;      
+    }
+  });
+
+</script>
