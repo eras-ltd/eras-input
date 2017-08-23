@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-comparison-validator demo</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+
+  <link rel='import' href='../../iron-demo-helpers/demo-pages-shared-styles.html'>
+  <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
+  <link rel='import' href='../../iron-form/iron-form.html'>
+  <link rel='import' href='../../paper-button/paper-button.html'>
+  <link rel='import' href='../eras-input.html'>
+  <link rel='import' href='../validators/eras-input-comparison-validator.html'>
+
+  <style is='custom-style' include='demo-pages-shared-styles'>
+    eras-input-comparison-validator {
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class='vertical-section-container centered'>
+    <h3>Equal</h3>
+    <demo-snippet>
+      <template is='dom-bind' id='app'>
+        <form is='iron-form' id='form'>
+          <eras-input name="input1" label="Enter something"> </eras-input>
+          <eras-input name="input2" label="Enter it again">
+            <eras-input-comparison-validator class='validator' other-name='input1' message='These have to match...' comparison='==' type='string'></eras-input-comparison-validator>
+          </eras-input>
+        </form>
+      </template>
+    </demo-snippet>
+  </div>
+
+  <div class='vertical-section-container centered'>
+    <h3>Not Equal</h3>
+    <demo-snippet>
+      <template is='dom-bind' id='app'>
+        <form is='iron-form' id='form'>
+          <eras-input name="input1" label="Enter something"> </eras-input>
+          <eras-input name="input2" label="Enter something else">
+            <eras-input-comparison-validator class='validator' other-name='input1' message='These must not match...' comparison='!='
+              type='string'></eras-input-comparison-validator>
+          </eras-input>
+        </form>
+      </template>
+    </demo-snippet>
+  </div>
+
+  <div class='vertical-section-container centered'>
+    <h3>More than</h3>
+    <demo-snippet>
+      <template is='dom-bind' id='app'>
+        <form is='iron-form' id='form'>
+          <eras-input name="input1" label="Enter a number"> </eras-input>
+          <eras-input name="input2" label="Enter a bigger number">
+            <eras-input-comparison-validator class='validator' other-name='input1' message='This has to be bigger...' comparison='>'
+              type='number'></eras-input-comparison-validator>
+          </eras-input>
+        </form>
+      </template>
+    </demo-snippet>
+  </div>
+
+</body>
+
+</html>

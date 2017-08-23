@@ -37,7 +37,6 @@ insed the element implementing `IronFormElementBehavior`... fun times!
       }
     </style>
     <content id='validators' select='.validator'></content>
-    <!-- <iron-a11y-keys id='a11y' target='[[target]]' keys='enter' on-keys-pressed='onEnter'></iron-a11y-keys> -->
     <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_floatLabel}}'>
       <template is='dom-if' if='{{icon}}'>
         <iron-icon icon='{{icon}}' prefix></iron-icon>
@@ -58,7 +57,9 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         /** The value of this input. */
         value: {
           type: String,
-          observer: '_valueChanged'
+          observer: '_valueChanged',
+          notify: true,
+          reflectToAttribute: true
         },
 
         /** 

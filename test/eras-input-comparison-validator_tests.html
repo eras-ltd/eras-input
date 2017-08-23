@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-comparison-validator test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../../iron-form/iron-form.html'>
+  <link rel='import' href='../eras-input.html'>
+  <link rel='import' href='../validators/eras-input-comparison-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-comparison-validator-fixture'>
+    <template>
+      <form id='form' is='iron-form'>
+        <eras-input id='input-1' name='input-1'> </eras-input>
+        <eras-input id='input-2' name='input-2'>
+          <eras-input-comparison-validator class='validator' id='validator' other-name='input-1' message='ERROR'></eras-input-comparison-validator>
+        </eras-input>
+        <div id='something-else'></div>
+      </form>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-comparison-validator', function () {
+      var el;
+      var input1;
+      var input2;
+      var validator;
+      var inputSpy1;
+      var inputSpy2;
+      var validatorSpy2;
+
+      setup(function () {
+        el = fixture('eras-input-comparison-validator-fixture');
+        input1 = el.querySelector('#input-1');
+        input2 = el.querySelector('#input-2');
+        validator = el.querySelector('#validator');
+        inputSpy = sinon.spy(input2, 'validate');
+        validatorSpy = sinon.spy(validator, 'validate');
+
+        // console.info(el, input1, input2, validator1, validator2);
+      });
+
+      teardown(function () {
+        input2.validate.restore();
+        validator.validate.restore();
+      });
+
+      test('find form', function () {
+        var form = validator._getParentForm();
+        assert.equal('iron-form', form.is, 'expected to find `iron-form`');
+      });
+
+      test('find other input', function () {
+        var expected = input1;
+        var actual = validator._getOtherInput();
+        assert.equal('eras-input', actual.is, 'expected to find `eras-input`');
+        assert.equal(expected, actual, 'expected other input to be returned');
+      });
+
+      suite('validation', function () {
+        var type;
+        var comparison;
+
+        var dataTest = function (value1, value2, expected) {
+          return function (done) {
+            input1.value = value1;
+            input2.value = value2;
+            assert.equal(expected, input2.validate(), 'expected #input-2 to be ' + (expected ? 'valid' : 'invalid'));
+            done();
+          }
+        }
+
+        setup(function () {
+          validator.type = type;
+          validator.comparison = comparison;
+        });
+
+        suite('strings', function () {
+          suiteSetup(function () {
+            type = 'string';
+          });
+
+          var data = [
+            { value1: 'abc', value2: 'abc', expected: true },
+            { value1: '1', value2: '1', expected: true },
+            { value1: 1, value2: 1, expected: true },
+            { value1: 'abc', value2: 'def', expected: false },
+            { value1: '1', value2: '2', expected: false },
+            { value1: 1, value2: 2, expected: false },
+          ];
+
+          suite('==', function () {
+            suiteSetup(function () {
+              comparison = '==';
+            });
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' == ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('!=', function () {
+            suiteSetup(function () {
+              comparison = '!=';
+            });
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' != ' + data[i].value2, dataTest(data[i].value1, data[i].value2, !data[i].expected));
+          });
+        });
+
+        suite('numbers', function () {
+          suiteSetup(function () {
+            type = 'number';
+          });
+
+          suite('==', function () {
+            suiteSetup(function () {
+              comparison = '==';
+            });
+
+            var data = [
+              { value1: 1, value2: 2, expected: false },
+              { value1: 1, value2: 1, expected: true },
+              { value1: 2, value2: 1, expected: false },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' == ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('!=', function () {
+            suiteSetup(function () {
+              comparison = '!=';
+            });
+
+            var data = [
+              { value1: 1, value2: 2, expected: true },
+              { value1: 1, value2: 1, expected: false },
+              { value1: 2, value2: 1, expected: true },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' != ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('>', function () {
+            suiteSetup(function () {
+              comparison = '>';
+            });
+
+            var data = [
+              { value1: 1, value2: 2, expected: true },
+              { value1: 1, value2: 1, expected: false },
+              { value1: 2, value2: 1, expected: false },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' > ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('<', function () {
+            suiteSetup(function () {
+              comparison = '<';
+            });
+
+            var data = [
+              { value1: 1, value2: 2, expected: false },
+              { value1: 1, value2: 1, expected: false },
+              { value1: 2, value2: 1, expected: true },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' < ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('>=', function () {
+            suiteSetup(function () {
+              comparison = '>=';
+            });
+
+            var data = [
+              { value1: 1, value2: 2, expected: true },
+              { value1: 1, value2: 1, expected: true },
+              { value1: 2, value2: 1, expected: false },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' >= ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('<=', function () {
+            suiteSetup(function () {
+              comparison = '<=';
+            });
+
+            var data = [
+              { value1: 1, value2: 2, expected: false },
+              { value1: 1, value2: 1, expected: true },
+              { value1: 2, value2: 1, expected: true },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' <= ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+        });
+
+        suite('booleans', function () {
+          suiteSetup(function () {
+            type = 'boolean';
+          });
+
+          var data = [
+            { value1: true, value2: true, expected: true },
+            { value1: true, value2: false, expected: false },
+            { value1: false, value2: false, expected: true },
+          ];
+
+          suite('==', function () {
+            suiteSetup(function () {
+              comparison = '==';
+            });
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' == ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('!=', function () {
+            suiteSetup(function () {
+              comparison = '!=';
+            });
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' != ' + data[i].value2, dataTest(data[i].value1, data[i].value2, !data[i].expected));
+          });
+        });
+
+        suite('dates', function () {
+          suiteSetup(function () {
+            type = 'date';
+          });
+
+          suite('==', function () {
+            suiteSetup(function () {
+              comparison = '==';
+            });
+
+            var data = [
+              { value1: '2017-08-01', value2: '2017-08-02', expected: false },
+              { value1: '2017-08-01', value2: '2017-08-01', expected: true },
+              { value1: '2017-08-02', value2: '2017-08-01', expected: false },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' == ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('!=', function () {
+            suiteSetup(function () {
+              comparison = '!=';
+            });
+
+            var data = [
+              { value1: '2017-08-01', value2: '2017-08-02', expected: true },
+              { value1: '2017-08-01', value2: '2017-08-01', expected: false },
+              { value1: '2017-08-02', value2: '2017-08-01', expected: true },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' != ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('>', function () {
+            suiteSetup(function () {
+              comparison = '>';
+            });
+
+            var data = [
+              { value1: '2017-08-01', value2: '2017-08-02', expected: true },
+              { value1: '2017-08-01', value2: '2017-08-01', expected: false },
+              { value1: '2017-08-02', value2: '2017-08-01', expected: false },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' > ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('<', function () {
+            suiteSetup(function () {
+              comparison = '<';
+            });
+
+            var data = [
+              { value1: '2017-08-01', value2: '2017-08-02', expected: false },
+              { value1: '2017-08-01', value2: '2017-08-01', expected: false },
+              { value1: '2017-08-02', value2: '2017-08-01', expected: true },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' < ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('>=', function () {
+            suiteSetup(function () {
+              comparison = '>=';
+            });
+
+            var data = [
+              { value1: '2017-08-01', value2: '2017-08-02', expected: true },
+              { value1: '2017-08-01', value2: '2017-08-01', expected: true },
+              { value1: '2017-08-02', value2: '2017-08-01', expected: false },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' >= ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+
+          suite('<=', function () {
+            suiteSetup(function () {
+              comparison = '<=';
+            });
+
+            var data = [
+              { value1: '2017-08-01', value2: '2017-08-02', expected: false },
+              { value1: '2017-08-01', value2: '2017-08-01', expected: true },
+              { value1: '2017-08-02', value2: '2017-08-01', expected: true },
+            ];
+
+            for (var i = 0; i < data.length; i++)
+              test(data[i].value1 + ' <= ' + data[i].value2, dataTest(data[i].value1, data[i].value2, data[i].expected));
+          });
+        });
+      });
+
+      test('blur', function (done) {
+        var value1 = 'abc';
+        var value2 = 'def';
+
+        input1.value = value1;
+
+        MockInteractions.focus(input2.$.input);
+        input2.value = value2;
+        MockInteractions.blur(input2.$.input);
+
+        assert.equal(false, input1.invalid, 'expected `#input-1` to be valid');
+        assert.equal(true, input2.invalid, 'expected `#input-2` to be invalid');
+        assert(inputSpy.calledOnce, 'expected `#input-2.validate()` to have been called once');
+        assert(validatorSpy.withArgs(value2).calledOnce, 'expected `#validator.validate(' + value2 + ')` to have been called once, not with ' + JSON.stringify(validatorSpy.args[0]));
+
+        done();
+      });
+
+      test('validate on other change', function (done) {
+        input1.value = 'abc';
+
+        MockInteractions.focus(input2.$.input);
+        input2.value = 'def';
+        MockInteractions.blur(input2.$.input);
+
+        assert.equal(false, input1.invalid, 'expected `#input-1` to be valid');
+        assert.equal(true, input2.invalid, 'expected `#input-2` to be invalid before we update the value');
+
+        input1.value = 'def';
+        Polymer.Base.fire('change', {}, { bubbles:true, node:input1 });
+
+        assert(inputSpy.calledTwice, 'expected `#input-2.validate()` to have been called twice');        
+        assert(validatorSpy.withArgs('def').calledTwice, 'expected `#validator.validate(def)` to have been called once, not with ' + JSON.stringify(validatorSpy.args[1]));
+        assert.equal(false, input1.invalid, 'expected `#input-1` to be valid');
+        assert.equal(false, input2.invalid, 'expected `#input-2` to be valid after we update the value');
+
+        done();
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,255 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../../eras-external/moment.html'>
+<link rel='import' href='../eras-input-validator-behavior.html'>
+<!--
+`eras-input-comparison-validator`
+
+Used to compare the value of one input with that of another.
+
+@demo demo/eras-input-comparison-validator_demo.html
+-->
+<script>
+  Polymer({
+    is: 'eras-input-comparison-validator',
+    properties: {
+      /** The **name** of the other input. */
+      otherName: String,
+
+      /**
+       * The type of the properties being compared: `string` | `number` | `date` | `boolean`
+       */
+      type: {
+        type: String,
+        value: 'string',
+        observer: '_typeChanged',
+        reflectToAttribute: true
+      },
+
+      /**
+       * The type of comparison to perform: `==` | `!=` | `>` | `<` | `>=` | `<=`
+       */
+      comparison: {
+        type: String,
+        value: '==',
+        observer: '_comparisonChanged',
+        reflectToAttribute: true
+      },
+    },
+
+    observers: [
+      '_checkTypeAndComparison(type, comparison)'
+    ],
+
+    behaviors: [
+      Eras.InputValidatorBehavior
+    ],
+
+    ready: function() {
+      // add an event listener to the other input that triggers validation of
+      // the input that is the parent to this validator on changes
+      var other = this._getOtherInput();
+      var parent = this.parentNode;
+      other.addEventListener('change', function(e){
+        if(parent.autoValidate)
+          parent.validate();
+      });
+    },
+
+    /**
+     * Ensures a value is provided.
+     * @param {Object} value The value to check.
+     * @return {Boolean} true if there is a value.
+     */
+    validate: function (value) {
+      // console.info('validator.validate', value);
+
+      var otherInput = this._getOtherInput();
+      if (!otherInput)
+        console.warn('the other input could not be found, validation will not occur')
+
+      this.invalid = !this._compare(value, otherInput.value, this.comparison, this.type);
+
+      return !this.invalid;
+    },
+
+    /**
+     * Compares two values
+     * @param {Object} value1
+     * @param {Object} value2
+     * @param {String} comparison the comparison type to use (eg `==` or `>=`)
+     * @param {String} type the type to assume while comparing values (eg `string` or `number`)
+     * @return {Boolean} the result of the comparison (eg `abc` == `abc` = true)
+     */
+    _compare: function (value1, value2, comparison, type) {
+      // console.info('validator._compare', type, value1, comparison, value2);
+
+      switch (type) {
+        case 'string': return this._compareStrings(value1, value2, comparison);
+        case 'number': return this._compareNumbers(value1, value2, comparison);
+        case 'boolean': return this._compareBooleans(value1, value2, comparison);
+        case 'date': return this._compareDates(value1, value2, comparison);
+        default: return false;
+      }
+    },
+
+    /**
+     * Compares two strings
+     * @param {String} value1
+     * @param {String} value2
+     * @param {String} comparison the comparison type to use (eg `==` or `!=`)
+     * @return {Boolean} the result of the comparison (eg `abc` == `abc` = true)
+     */
+    _compareStrings: function (value1, value2, comparison) {
+      // console.info('validator._compareStrings', value1, value2, comparison);
+
+      switch (comparison) {
+        case '==': return value1.toString() == value2.toString();
+        case '!=': return value1.toString() != value2.toString();
+        default: return false;
+      }
+    },
+
+    /**
+     * Compares two numbers
+     * @param {Number} value1
+     * @param {Number} value2
+     * @param {String} comparison the comparison type to use (eg `==` or `!=`)
+     * @return {Boolean} the result of the comparison (eg 1 == 1 = true)
+     */
+    _compareNumbers: function (value1, value2, comparison) {
+      console.info('validator._compareNumbers', value1, comparison, value2);
+
+      var number1 = Number(value1);
+      var number2 = Number(value2);
+
+      switch (comparison) {
+        case '==': return number1 == number2;
+        case '!=': return number1 != number2;
+        case '>': return number1 > number2;
+        case '<': return number1 < number2;
+        case '>=': return number1 >= number2;
+        case '<=': return number1 <= number2;
+        default: return false;
+      }
+    },
+
+    /**
+     * Compares two booleans
+     * @param {Boolean} value1
+     * @param {Boolean} value2
+     * @param {String} comparison the comparison type to use (eg `==` or `!=`)
+     * @return {Boolean} the result of the comparison (eg false == false = true)
+     */
+    _compareBooleans: function (value1, value2, comparison) {
+      // console.info('validator._compareBooleans', value1, value2, comparison);
+
+      switch (comparison) {
+        case '==': return value1 == value2;
+        case '!=': return value1 != value2;
+        default: return false;
+      }
+    },
+
+    /**
+     * Compares two dates using moment
+     * @param {String} value1 `YYYY-MM-DD`
+     * @param {String} value2 `YYYY-MM-DD`
+     * @param {String} comparison the comparison type to use (eg `==` or `!=`)
+     * @return {Boolean} the result of the comparison (eg '1986-02-28' < '2000-01-01' = true)
+     */
+    _compareDates: function (value1, value2, comparison) {
+      // console.info('validator._compareNumbers', value1, comparison, value2);
+
+      var date1 = moment(value1, 'YYYY-MM-DD');
+      var date2 = moment(value2, 'YYYY-MM-DD');
+
+      switch (comparison) {
+        case '==': return date1.isSame(date2, 'day');
+        case '!=': return !date1.isSame(date2, 'day');
+        case '>': return date1.isAfter(date2, 'day');
+        case '<': return date1.isBefore(date2, 'day');
+        case '>=': return date1.isSameOrAfter(date2, 'day');
+        case '<=': return date1.isSameOrBefore(date2, 'day');
+        default: return false;
+      }
+    },
+
+    /**
+     * Finds the first parent form of this input.
+     * Walks up the DOM until it finds a form element.
+     * @return {Element} form
+     */
+    _getParentForm: function () {
+      var parent = this.parentNode;
+
+      while (parent.nodeName != 'FORM' && parent.nodeName != 'HTML')
+        parent = parent.parentNode;
+
+      if (parent.nodeName === 'FORM')
+        return parent;
+      else
+        console.warn('Parent form could not be found');
+    },
+
+    /**
+     * Gets the other input by it's name attribute.
+     * @return {Element} input
+     */
+    _getOtherInput: function () {
+      var input;
+      var form = this._getParentForm();
+      var selector = '[name=\'' + this.otherName + '\']';
+
+      // first check the parent form, if it could be found
+      if (form)
+        input = form.querySelector(selector);
+
+      // then check the rest of the document
+      if (!input)
+        input = document.querySelector(selector);
+        
+      return input;
+    },
+
+    /**
+     * Observes changes to `type` and ensures that a valid
+     * value has been provided. Falls back to `string`.
+     */
+    _typeChanged: function (type) {
+      var allowed = ['string', 'number', 'date', 'boolean'];
+      if (allowed.indexOf(type) < 0) {
+        console.warn('the value `' + type + '` is not valid for `type` defaulting to `string`, valid options are: ' + JSON.stringify(allowed));
+        this.type = 'string';
+      }
+    },
+
+    /**
+     * Observes changes to `comparison` and ensures that a valid
+     * value has been provided. Falls back to `equals`.
+     */
+    _comparisonChanged: function (comparison) {
+      var allowed = ['==', '!=', '>', '<', '>=', '<='];
+      if (allowed.indexOf(comparison) < 0) {
+        console.warn('the value `' + comparison + '` is not valid for `comparison` defaulting to `==`, valid options are: ' + JSON.stringify(allowed));
+        this.comparison = '==';
+      }
+    },
+
+    /**
+     * Observes changes to `type` and `comparison` to ensure
+     * incorrect comparisons are not attempted (eg string1 > string2)
+     */
+    _checkTypeAndComparison: function (type, comparison) {
+      if (type == 'string' && comparison != '==' && comparison != '!=') {
+        console.warn('values of type `' + type + '` cannot be compared with `' + comparison + '` defaulting to `==`, valid options are: ' + JSON.stringify(['==', '!=']));
+        this.comparison = '==';
+      }
+
+      if (type == 'boolean' && comparison != '==' && comparison != '!=') {
+        console.warn('values of type `' + type + '` cannot be compared with `' + comparison + '` defaulting to `==`, valid options are: ' + JSON.stringify(['==', '!=']));
+        this.comparison = '==';
+      }
+    }
+  });
+
+</script>
