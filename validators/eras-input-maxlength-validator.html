@@ -18,31 +18,32 @@ If a value is required then you must also supply an
       maxlength: Number
     },
     behaviors: [
-      Eras.InputValidatorBehavior
+      Polymer.ErasInputValidatorBehavior
     ],
-    
+
     /**
      * Ensures the value is no longer than specified in `maxlength`.
      * @param {Object} value The value to check.
      * @return {Boolean} true if it's long enough.
      */
-    validate: function(value) {
-      if(value === undefined)
+    validate: function (value) {
+      if (value === undefined)
         this.invalid = false;
-      else if(value === null)
+      else if (value === null)
         this.invalid = false;
       else
         this.invalid = value.toString().length > this.maxlength;
 
       return !this.invalid;
     },
-    
+
     /**
      * Adds the `maxlength` attribute to the input
      * @param {Element} element input
      */
-    copyAttributes: function(element) {
+    copyAttributes: function (element) {
       Polymer.dom(element).setAttribute('maxlength', this.maxlength);
     }
   });
+
 </script>

@@ -13,31 +13,32 @@
       minlength: Number
     },
     behaviors: [
-      Eras.InputValidatorBehavior
+      Polymer.ErasInputValidatorBehavior
     ],
-    
+
     /**
      * Ensures the value is at least as long as specified in `minlength`.
      * @param {Object} value The value to check.
      * @return {Boolean} true if it's long enough.
      */
-    validate: function(value) {
-      if(value === undefined)
+    validate: function (value) {
+      if (value === undefined)
         this.invalid = true;
-      else if(value === null)
+      else if (value === null)
         this.invalid = true;
       else
         this.invalid = value.toString().length < this.minlength;
 
       return !this.invalid;
     },
-    
+
     /**
      * Adds the `minlength` attribute to the input
      * @param {Element} element input
      */
-    copyAttributes: function(element) {
+    copyAttributes: function (element) {
       Polymer.dom(element).setAttribute('minlength', this.minlength);
     }
   });
+
 </script>

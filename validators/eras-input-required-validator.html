@@ -9,31 +9,32 @@
   Polymer({
     is: 'eras-input-required-validator',
     behaviors: [
-      Eras.InputValidatorBehavior
+      Polymer.ErasInputValidatorBehavior
     ],
-    
+
     /**
      * Ensures a value is provided.
      * @param {Object} value The value to check.
      * @return {Boolean} true if there is a value.
      */
-    validate: function(value) {
-      if(value === undefined)
+    validate: function (value) {
+      if (value === undefined)
         this.invalid = true;
-      else if(value === null)
+      else if (value === null)
         this.invalid = true;
       else
         this.invalid = !(value.toString());
 
       return !this.invalid;
     },
-    
+
     /**
      * Adds the `required` attribute to the input
      * @param {Element} element input
      */
-    copyAttributes: function(element) {
+    copyAttributes: function (element) {
       Polymer.dom(element).setAttribute('required', '');
     }
   });
+
 </script>

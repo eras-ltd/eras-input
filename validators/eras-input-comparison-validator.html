@@ -41,16 +41,16 @@ Used to compare the value of one input with that of another.
     ],
 
     behaviors: [
-      Eras.InputValidatorBehavior
+      Polymer.ErasInputValidatorBehavior
     ],
 
-    ready: function() {
+    ready: function () {
       // add an event listener to the other input that triggers validation of
       // the input that is the parent to this validator on changes
       var other = this._getOtherInput();
       var parent = this.parentNode;
-      other.addEventListener('change', function(e){
-        if(parent.autoValidate)
+      other.addEventListener('change', function (e) {
+        if (parent.autoValidate)
           parent.validate();
       });
     },
@@ -207,7 +207,7 @@ Used to compare the value of one input with that of another.
       // then check the rest of the document
       if (!input)
         input = document.querySelector(selector);
-        
+
       return input;
     },
 
