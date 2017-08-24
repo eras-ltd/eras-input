@@ -40,23 +40,25 @@ insed the element implementing `IronFormElementBehavior`... fun times!
     
     <content id='validators' select='.validator'></content>
     
-    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_floatLabel}}'>
+    <paper-input-container 
+      id='container' 
+      invalid$='{{invalid}}' 
+      disabled$='{{disabled}}'
+      always-float-label$='{{_floatLabel}}'>
       
       <template is='dom-if' if='{{icon}}'>
         <iron-icon icon='{{icon}}' prefix></iron-icon>
       </template>
       
       <content id='content'></content>
-      
+
       <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>
       </template>
-      
+
       <input 
         id='input' 
         is='iron-input' 
-        on-blur='_onBlur' 
-        on-focus='_onFocus' 
         name='{{name}}' 
         bind-value='{{value}}' 
         readonly$={{readonly}}        

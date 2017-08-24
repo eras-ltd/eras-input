@@ -4,6 +4,10 @@
    * Implement this behavior to create input elements that can be 
    * validated using elements implementing `Polymer.ErasInputValidatorBehavior`
    *
+   * You **must** include an element with that has `id='input'` as an attribute
+   * for the `focus` and `blur` event listeners to bind to. Without these auto
+   * validation won't occur.
+   *
    * @polymerBehavior Polymer.ErasInputBehavior
    */
   Polymer.ErasInputBehavior = {
@@ -72,6 +76,10 @@
     ready: function () {
       if (this.value !== undefined && this.value.length > 0)
         this.autoValidate = true;
+
+      var parent = this;
+      this.$.input.addEventListener('focus', function(){ parent._onFocus() });
+      this.$.input.addEventListener('blur', function(){ parent._onBlur() });
     },
 
     /**

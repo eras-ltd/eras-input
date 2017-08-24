@@ -24,13 +24,38 @@
   <script>
     suite('eras-input', function () {
       var el;
+      var validateSpy;
 
       setup(function () {
         el = fixture('eras-input-fixture');
+        validateSpy = sinon.spy(el, 'validate');
+      });
+
+      teardown(function(){
+        el.validate.restore();
       });
       
       test('instantiation', function () {
         assert.equal(el.is, 'eras-input');
+      });
+
+      test('validate on blur', function(done){
+        MockInteractions.blur(el.$.input);
+        assert(validateSpy.calledOnce, 'expected validate to have been called once');
+        done();
+      });
+
+      test('no auto validate before blur', function(done){
+        el.value = 'anything';
+        assert(validateSpy.notCalled, 'did not expect validate to have been called');
+        done();
+      });
+
+      test('auto validate after blur', function(done){
+        MockInteractions.blur(el.$.input);
+        el.value = 'anything';
+        assert(validateSpy.calledTwice, 'expected validate to have been called twice');
+        done();
       });
     });
 
