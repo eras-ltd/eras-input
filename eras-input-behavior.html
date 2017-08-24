@@ -1,0 +1,125 @@
+<link rel="import" href="../polymer/polymer.html">
+<script>
+  /**
+   * Implement this behavior to create input elements that can be 
+   * validated using elements implementing `Polymer.ErasInputValidatorBehavior`
+   *
+   * @polymerBehavior Polymer.ErasInputBehavior
+   */
+  Polymer.ErasInputBehavior = {
+    properties: {
+      /** The value of this input. */
+      value: {
+        type: String,
+        observer: '_valueChanged',
+        notify: true,
+        reflectToAttribute: true
+      },
+
+      /** 
+       * The name of this input that will be associated with the value
+       * when submitted.
+       */
+      name: String,
+
+      /** The label to be used for this input. *Optional* */
+      label: String,
+
+      /** Name of the icon to prefix this input with. *Optional* */
+      icon: String,
+
+      /** The message to display when invalid. */
+      errorMessage: String,
+
+      /** Returns true if the value is invalid. */
+      invalid: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        notify: true
+      },
+
+      /**  
+       * States whether or not the value will be vaildated upon every change.
+       * Gets set to true in `ready()` and `_onBlur()`
+       */
+      autoValidate: {
+        type: Boolean,
+        value: false
+      },
+
+      /** Set to true to disable this input. */
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+
+      /** Set to true to make this input readonly. */
+      readonly: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
+    },
+
+    /**
+     * Gets the supplied validators as an array. 
+     * Validators must have a class of `.validator` to be picked up.
+     * @return {Element[]} Implementations of `Eras.InputValidatorBehavior`
+     */
+    _getValidators: function () {
+      return this.getContentChildren('#validators');
+    },
+
+    /**
+     * Validates the current value of the input against
+     * all supplied validators.
+     * @return {Boolean} false if invalid, true if not
+     */
+    validate: function () {
+      var validators = this._getValidators();
+
+      for (var i = 0; i < validators.length; i++) {
+        if (!validators[i].validate(this.value)) {
+          this.invalid = true;
+          this.errorMessage = validators[i].message;
+          return false; // not valid
+        }
+      }
+
+      this.invalid = false;
+      return true; // if all validators passed
+    },
+
+    /**
+     * Called when the user focuses on this element. 
+     * Copies attributes from the validators to the input.
+     */
+    _onFocus: function () {
+      var validators = this._getValidators();
+      for (var i = 0; i < validators.length; i++)
+        validators[i].copyAttributes(this.$.input);
+    },
+
+    /**
+     * Called when the user clicks off this element. 
+     * Sets `autoValidate` to true and calls `validate()`.
+     */
+    _onBlur: function () {
+      this.autoValidate = true;
+      this.validate();
+    },
+
+    /**
+     * If `autoValidate` is set to true then calls `validate()` 
+     * on every change to `value`
+     * @param {Object} value       
+     */
+    _valueChanged: function (value) {
+      if (this.autoValidate)
+        this.validate();
+    },
+  }
+
+</script>

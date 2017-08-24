@@ -4,6 +4,7 @@
 <link rel='import' href='../iron-input/iron-input.html'>
 <link rel='import' href='../paper-input/paper-input-container.html'>
 <link rel='import' href='../paper-input/paper-input-error.html'>
+<link rel='import' href='../eras-input/eras-input-behavior.html'>
 <link rel='import' href='../eras-input/validators/eras-input-regex-validator.html'>
 
 <!--
@@ -53,27 +54,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
   <script>
     Polymer({
       is: 'eras-input',
-      properties: {
-        /** The value of this input. */
-        value: {
-          type: String,
-          observer: '_valueChanged',
-          notify: true,
-          reflectToAttribute: true
-        },
-
-        /** 
-         * The name of this input that will be associated with the value
-         * when submitted.
-         */
-        name: String,
-
-        /** The label to be used for this input. *Optional* */
-        label: String,
-
-        /** Name of the icon to prefix this input with. *Optional* */
-        icon: String,
-
+      properties: {       
         /** The type of input, passed directly to the input element. */
         type: {
           type: String,
@@ -96,108 +77,18 @@ insed the element implementing `IronFormElementBehavior`... fun times!
          _preventInvalidInput: {
            type: Boolean,
            computed: '_computePreventInvalidInput(allowedPattern)'
-         },
-
-        /** The message to display when invalid. */
-        errorMessage: String,
-
-        /** Returns true if the value is invalid. */
-        invalid: {
-          reflectToAttribute: true,
-          type: Boolean,
-          value: false
-        },
-
-        /**  
-         * States whether or not the value will be vaildated upon every change.
-         * Gets set to true in `ready()` and `_onBlur()`
-         */
-        autoValidate: {
-          type: Boolean,
-          value: false
-        },
-
-        /** Set to true to disable this input. */
-        disabled: {
-          reflectToAttribute: true,
-          type: Boolean,
-          value: false
-        },
-
-        /** Set to true to make this input readonly. */
-        readonly: {
-          reflectToAttribute: true,
-          type: Boolean,
-          value: false
-        },
+         },                
       },
 
       behaviors: [
-        Polymer.IronFormElementBehavior
+        Polymer.IronFormElementBehavior,
+        Polymer.ErasInputBehavior
       ],
 
       ready: function () {
         if (this.value !== undefined && this.value.length > 0)
           this.autoValidate = true;
-      },
-
-      /**
-       * Gets the supplied validators as an array. 
-       * Validators must have a class of `.validator` to be picked up.
-       * @return {Element[]} Implementations of `Eras.InputValidatorBehavior`
-       */
-      _getValidators: function () {
-        return this.getContentChildren('#validators');
-      },
-
-      /**
-       * Validates the current value of the input against
-       * all supplied validators.
-       * @return {Boolean} false if invalid, true if not
-       */
-      validate: function () {
-        var validators = this._getValidators();
-
-        for (var i = 0; i < validators.length; i++) {
-          if (!validators[i].validate(this.value)) {
-            this.invalid = true;
-            this.errorMessage = validators[i].message;
-            return false; // not valid
-          }
-        }
-
-        this.invalid = false;
-        return true; // if all validators passed
-      },
-
-      /**
-       * If `autoValidate` is set to true then calls `validate()` 
-       * on every change to `value`
-       * @param {Object} value       
-       */
-      _valueChanged: function (value) {
-        if (this.autoValidate)
-          this.validate();
-      },
-
-      /**
-       * Called when the user focuses on this element. 
-       * Copies attributes from the validators to the input.
-       */
-      _onFocus: function () {
-        var validators = this._getValidators();
-        for (var i = 0; i < validators.length; i++) 
-          validators[i].copyAttributes(this.$.input);
-      },
-
-      /**
-       * Called when the user clicks off this element. 
-       * Sets `autoValidate` to true and calls `validate()`.
-       */
-      _onBlur: function () {
-        this.autoValidate = true;
-        this.validate();
-      },
+      },                  
 
       /**
        * Computes `_preventInvalidInput`
