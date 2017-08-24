@@ -61,6 +61,17 @@
         value: false,
         reflectToAttribute: true,
       },
+
+      /** Set to true to display the char counter */
+      showCharCounter: {
+        type: Boolean,
+        value: false
+      },
+    },
+
+    ready: function () {
+      if (this.value !== undefined && this.value.length > 0)
+        this.autoValidate = true;
     },
 
     /**

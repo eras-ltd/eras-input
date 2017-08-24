@@ -4,8 +4,8 @@
 <link rel='import' href='../iron-input/iron-input.html'>
 <link rel='import' href='../paper-input/paper-input-container.html'>
 <link rel='import' href='../paper-input/paper-input-error.html'>
+<link rel='import' href='../paper-input/paper-input-char-counter.html'>
 <link rel='import' href='../eras-input/eras-input-behavior.html'>
-<link rel='import' href='../eras-input/validators/eras-input-regex-validator.html'>
 
 <!--
 `eras-input`
@@ -37,20 +37,43 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         margin-right: 5px;
       }
     </style>
+    
     <content id='validators' select='.validator'></content>
+    
     <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_floatLabel}}'>
+      
       <template is='dom-if' if='{{icon}}'>
         <iron-icon icon='{{icon}}' prefix></iron-icon>
       </template>
+      
       <content id='content'></content>
+      
       <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>
       </template>
-      <input id='input' is='iron-input' on-blur='_onBlur' on-focus='_onFocus' name='{{name}}' bind-value='{{value}}' readonly$={{readonly}}
-        type$='{{type}}' autocomplete$='{{autocomplete}}' prevent-invalid-input$='{{_preventInvalidInput}}' allowed-pattern$='{{allowedPattern}}' />
-      <paper-input-error>{{errorMessage}}</paper-input-error>
+      
+      <input 
+        id='input' 
+        is='iron-input' 
+        on-blur='_onBlur' 
+        on-focus='_onFocus' 
+        name='{{name}}' 
+        bind-value='{{value}}' 
+        readonly$={{readonly}}        
+        type$='{{type}}' 
+        autocomplete$='{{autocomplete}}' 
+        prevent-invalid-input$='{{_preventInvalidInput}}' 
+        allowed-pattern$='{{allowedPattern}}' />
+      
+      <paper-input-error>{{errorMessage}}</paper-input-error> 
+      
+      <template is='dom-if' if='{{showCharCounter}}'>
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>    
+      
     </paper-input-container>
   </template>
+  
   <script>
     Polymer({
       is: 'eras-input',
@@ -83,12 +106,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
       behaviors: [
         Polymer.IronFormElementBehavior,
         Polymer.ErasInputBehavior
-      ],
-
-      ready: function () {
-        if (this.value !== undefined && this.value.length > 0)
-          this.autoValidate = true;
-      },                  
+      ],                        
 
       /**
        * Computes `_preventInvalidInput`
