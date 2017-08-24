@@ -1,5 +1,11 @@
 <link rel="import" href="../polymer/polymer.html">
 <script>
+  /**
+   * Implement this behavior to create elements that can be used to validate
+   * elements implementing `Polymer.ErasInputBehavior`
+   *
+   * @polymerBehavior Polymer.ErasInputValidatorBehavior
+   */
   Polymer.ErasInputValidatorBehavior = {
     properties: {
       /** Returns true if the value is invalid. */
@@ -10,7 +16,7 @@
       },
 
       /** Message to display if the value is invalid. */
-      message: String,      
+      message: String,
     },
 
     /**
@@ -25,8 +31,8 @@
      * Implement logic to copy attributes to the input in this function.
      * @param {Element} element The element to copy the attrubutes to
      */
-     copyAttributes: function(element) {       
-     }
+    copyAttributes: function (element) {
+    }
   }
 
 </script>
