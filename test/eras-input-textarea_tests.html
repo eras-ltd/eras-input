@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-textarea test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../validators/eras-input-minlength-validator.html'>
+  <link rel='import' href='../eras-input-textarea.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-textarea-fixture'>
+    <template>
+      <eras-input-textarea>
+        <eras-input-minlength-validator class='validator' minlength='10'></eras-input-minlength-validator>
+      </eras-input-textarea>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-textarea', function () {
+      var el;
+      var validateSpy;
+
+      setup(function () {
+        el = fixture('eras-input-textarea-fixture');
+        validateSpy = sinon.spy(el, 'validate');
+      });
+
+      teardown(function(){
+        el.validate.restore();
+      });
+      
+      test('instantiation', function () {
+        assert.equal(el.is, 'eras-input-textarea');
+      });
+
+      test('validate on blur', function(done){
+        MockInteractions.blur(el.$.input);
+        assert(validateSpy.calledOnce, 'expected validate to have been called once');
+        done();
+      });
+
+      test('no auto validate before blur', function(done){
+        el.value = 'anything';
+        assert(validateSpy.notCalled, 'did not expect validate to have been called');
+        done();
+      });
+
+      test('auto validate after blur', function(done){
+        MockInteractions.blur(el.$.input);
+        el.value = 'anything';
+        assert(validateSpy.calledTwice, 'expected validate to have been called twice');
+        done();
+      });
+
+      test('invalid', function(done){
+        el.value = 'short';
+        el.validate();
+        assert.equal(true, el.invalid, 'expected the input to be invalid');
+        done();
+      });
+
+      test('valid', function(done){
+        el.value = 'Lorem ipsum dolor sit amet'; 
+        el.validate();
+        assert.equal(false, el.invalid, 'expected the input to be valid');
+        done();
+      });
+    });
+
+  </script>
+</body>
+
+</html>

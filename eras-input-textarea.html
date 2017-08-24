@@ -1,0 +1,98 @@
+<link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-icon/iron-icon.html'>
+<link rel='import' href='../iron-autogrow-textarea/iron-autogrow-textarea.html'>
+<link rel='import' href='../paper-input/paper-input-container.html'>
+<link rel='import' href='../paper-input/paper-input-error.html'>
+<link rel='import' href='../paper-input/paper-input-char-counter.html'>
+<link rel='import' href='../eras-input/eras-input-behavior.html'>
+<!--
+`eras-input-textarea`
+@demo demo/eras-input-textarea_demo.html
+-->
+<dom-module id='eras-input-textarea'>
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+
+    <content id='validators' select='.validator'></content>
+
+    <paper-input-container 
+      id='container' 
+      invalid$='{{invalid}}' 
+      disabled$='{{disabled}}' 
+      always-float-label$='{{_floatLabel}}'>
+
+      <content id='content'></content>
+
+      <template is='dom-if' if='{{label}}'>
+        <label>{{label}}</label>
+      </template>
+
+      <iron-autogrow-textarea 
+        id='input' 
+        class='paper-input-input' 
+        name='{{name}}' 
+        bind-value='{{value}}'
+        readonly$='{{readonly}}'
+        rows$='{{rows}}'
+        max-rows$='{{maxRows}}'>
+      </iron-autogrow-textarea>
+
+      <paper-input-error>{{errorMessage}}</paper-input-error>
+
+      <template is='dom-if' if='{{showCharCounter}}'>
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+
+    </paper-input-container>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'eras-input-textarea',
+      properties: {
+        /**
+         * **NOT IMPLEMENTED** 
+         *
+         * Icons will not be displayed for textareas because
+         * they are vertically aligned in the middle and look 
+         * daft!
+         */
+        icon: String,
+
+        /** 
+         * Set to true to display the char counter.
+         * Overrides default value from `Polymer.ErasInputBehavior`
+         */
+        showCharCounter: {
+          type: Boolean,
+          value: true
+        },
+
+        /** The initial number of rows. */
+        rows: {
+          type: Number,
+          value: 1
+        },
+
+        /**
+         * The maximum number of rows this element can grow to until it
+         * scrolls. *0 means no maximum*
+         */
+        maxRows: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.ErasInputBehavior
+      ],
+    });
+  </script>
+</dom-module>
