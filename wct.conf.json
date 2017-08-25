@@ -1,5 +1,4 @@
 {
-  // "testTimeout": 360000,
   "plugins": {
     "sauce": {
       "disabled": false,
@@ -9,13 +8,6 @@
           "platform": "Windows 10",
           "version": ""
         },
-        // I have tried multiple things now, and whatever I do IE11 tests
-        // fail with a time out when testing with travis and sauce connect
-        // {
-        //   "browserName": "internet explorer",
-        //   "platform": "Windows 10",
-        //   "version": "11.103"
-        // },
         {
           "browserName": "safari",
           "platform": "OS X 10.11",
