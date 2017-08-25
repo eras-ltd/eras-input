@@ -16,7 +16,6 @@ before_script:
 - polylint
 script:
 - xvfb-run wct
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then wct -s 'default'; fi
 env:
   global:
   - secure: ektHu9jxoSFUx5fv5O3Pmgz/otClk+/OvFi6lq0xwUBJcI2+kbtHiD13Bj1beraPWx4USpSLvDLv6YWedB+o0+vydJeJfJ4Tia7GISFA99zfBi55d1vTJYpRE5ssUwnrlo2GmDuOoZO880TzNmkdsK/PbKtR4CjcbJSzCkLmdY1rRewI4w2vrFUB6hzRxbPUx5bMeqCpZwEJiiOC/uibwhu0mCJsjEz4V6sEO6KI6y3AzzgrNUouvF7pdoc00yRZCl4MqWKdy+hNfW2T/OzkJdCSSiG8qyCT2WmDdx1OwB2ZdTjZ4U8Bf5+SPKtbe778aRTrqY07mYSc8JIVtXve+1FfdukG+rOAKeX31lNkFt74N0hEQUveFoAZHIf+8BSvJLmNa8T5WhfpeDWt0cnj5kXTN/vFEgwnC69uc9nNjUFcfVQgn6UF9CRLXpqheHOhm5SRak/r97rbVCIY9sozNITT8JPoxrRre3y4mik2T15MHDNLMynh8hB0ZyAvY+MJZZrzCqQKWba/PpqcUXTimBjV2cn63mQ8WM5J11KWL5PHt3a5NDgiVHnPtWIKnDMIe7gHeZmNbV/cvuZsr8Yak4FG1bidzHg+NS5vd7nt79XDMB0x9K/DF32Vce6WO5PvDhZ2tpkI0phds5103RDNqEoK5LCNtsvwV3ZK+kkWIeQ=
