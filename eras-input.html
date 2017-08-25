@@ -5,7 +5,7 @@
 <link rel='import' href='../paper-input/paper-input-container.html'>
 <link rel='import' href='../paper-input/paper-input-error.html'>
 <link rel='import' href='../paper-input/paper-input-char-counter.html'>
-<link rel='import' href='../eras-input/eras-input-behavior.html'>
+<link rel='import' href='eras-input-behavior.html'>
 
 <!--
 `eras-input`
@@ -43,8 +43,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
     <paper-input-container 
       id='container' 
       invalid$='{{invalid}}' 
-      disabled$='{{disabled}}'
-      always-float-label$='{{_floatLabel}}'>
+      disabled$='{{disabled}}'>
       
       <template is='dom-if' if='{{icon}}'>
         <iron-icon icon='{{icon}}' prefix></iron-icon>

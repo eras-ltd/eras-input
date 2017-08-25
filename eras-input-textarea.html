@@ -5,7 +5,7 @@
 <link rel='import' href='../paper-input/paper-input-container.html'>
 <link rel='import' href='../paper-input/paper-input-error.html'>
 <link rel='import' href='../paper-input/paper-input-char-counter.html'>
-<link rel='import' href='../eras-input/eras-input-behavior.html'>
+<link rel='import' href='eras-input-behavior.html'>
 <!--
 `eras-input-textarea`
 @demo demo/eras-input-textarea_demo.html
@@ -23,8 +23,7 @@
     <paper-input-container 
       id='container' 
       invalid$='{{invalid}}' 
-      disabled$='{{disabled}}' 
-      always-float-label$='{{_floatLabel}}'>
+      disabled$='{{disabled}}'>
 
       <content id='content'></content>
 
