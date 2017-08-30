@@ -1,0 +1,124 @@
+<link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-flex-layout/iron-flex-layout-classes.html'>
+<link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-label/iron-label.html'>
+<link rel='import' href='../paper-checkbox/paper-checkbox.html'>
+<link rel='import' href='eras-input-behavior.html'>
+<!--
+`eras-input-checkbox`
+
+Simple checkbox and label combination.
+
+Currently only supports the `eras-input-checkbox-required-validator`
+
+### Styling
+Property|Description|Default
+--------|-----------|-------
+`--theme-colour`|Colour of the selected date's cell|`--primary-color`
+`--eras-input-subtitle`|Colour for subtitles|`--paper-grey-700`
+`--eras-input-invalid`|Colour when invalid|`--error-color`
+
+@demo demo/eras-input-checkbox_demo.html
+-->
+<dom-module id='eras-input-checkbox'>
+  <template>
+    <style include='iron-flex iron-flex-alignment'>
+       :host {
+        display: block;
+        padding: 8px 0;
+      }
+
+      iron-label {
+        border-bottom: 2px solid transparent;
+        display: inline-block;
+        padding-bottom: 6px;
+        cursor: pointer;
+      }
+
+      paper-checkbox {
+        --paper-checkbox-checked-color: var(--theme-colour, --primary-color);
+      }
+
+      #input {
+        padding-bottom: 2px;
+      }
+
+      #subtitle {
+        font-size: 12px;
+        color: var(--eras-input-subtitle, --paper-grey-700);
+      }
+
+      #error-message {
+        height: 20px;
+      }
+
+      #error-message span {
+        display: none;
+        color: var(--eras-input-invalid, --error-color);
+        font-size: 12px;
+        line-height: 20px;
+      }
+
+       :host[invalid] paper-checkbox {
+        --paper-checkbox-unchecked-color: var(--eras-input-invalid, --error-color);
+      }
+
+       :host[invalid] iron-label {
+        color: var(--eras-input-invalid, --error-color);
+        border-bottom-color: var(--eras-input-invalid, --error-color);
+      }
+
+       :host[invalid] #subtitle {
+        color: var(--eras-input-invalid, --error-color);
+      }
+
+       :host[invalid] #error-message span {
+        display: inline;
+      }
+    </style>
+    <content></content>
+    <iron-label class='layout horizontal center'>
+      <paper-checkbox id='input' iron-label-target checked$='{{value}}' disabled$='{{disabled}}' on-change='_onChange' invalid$='{{invalid}}'></paper-checkbox>
+      <div id='label'>
+        <div>{{label}}</div>
+        <template is='dom-if' if='{{subtitle}}'>
+          <div id='subtitle'>{{subtitle}}</div>
+        </template>
+      </div>
+    </iron-label>
+    <div id="error-message">
+      <span>{{errorMessage}}</span>
+    </div>
+    <input type='hidden' name='{{name}}' value='{{value}}'>
+  </template>
+  <script>
+    Polymer({
+      is: 'eras-input-checkbox',
+      properties: {
+        /**
+         * Whether or not this element is checked.
+         * `true` if checked, `false if not.         
+         */
+        value: {
+          type: Boolean,
+          value: false
+        },
+
+        /** Text to be displayed under the label. */
+        subtitle: String
+      },
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.ErasInputBehavior
+      ],
+      ready: function () {
+        // this is to prevent the validation firing on blur as is standard for `Polymer.ErasInputBehavior`
+        this._onBlur = function () { };
+      },
+      _onChange: function (e) {
+        this.value = e.target.checked;
+        this.validate();
+      }
+    });
+  </script>
+</dom-module>

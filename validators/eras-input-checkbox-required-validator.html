@@ -1,0 +1,33 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='eras-input-validator-behavior.html'>
+<!--
+`eras-input-required-validator`
+
+@demo demo/eras-input-checkbox_demo.html
+-->
+<script>
+  Polymer({
+    is: 'eras-input-checkbox-required-validator',
+    behaviors: [
+      Polymer.ErasInputValidatorBehavior
+    ],
+
+    /** Sets the `required` attribute on the parents input */
+    attached: function() {
+      Polymer.dom(this.parentInput.$.input).setAttribute('required', '');
+    },
+
+    /**
+     * Ensures the checkbox is checked
+     * @param {Object} value whether or not the checkbox is checked
+     * @return {Boolean} true if it's checked.
+     */
+    validate: function (value) {
+      if(!value)
+        return false;
+      else
+        return true;
+    }
+  });
+
+</script>

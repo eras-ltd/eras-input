@@ -11,54 +11,75 @@
   <script src='../../web-component-tester/browser.js'></script>
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../../iron-form/iron-form.html'>
   <link rel='import' href='../eras-input.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-fixture'>
     <template>
-      <eras-input></eras-input>
+      <form is='iron-form'>
+        <eras-input></eras-input>
+      </form>
     </template>
   </test-fixture>
 
   <script>
     suite('eras-input', function () {
+      var form;
       var el;
-      var validateSpy;
+      var stub;
 
       setup(function () {
-        el = fixture('eras-input-fixture');
-        validateSpy = sinon.spy(el, 'validate');
+        form = fixture('eras-input-fixture');
+        el = form.querySelector('eras-input');
+        stub = sinon.stub(el, 'validate');
       });
 
-      teardown(function(){
+      teardown(function () {
         el.validate.restore();
       });
-      
+
       test('instantiation', function () {
         assert.equal(el.is, 'eras-input');
       });
 
-      test('validate on blur', function(done){
+      test('validate on blur', function (done) {
         MockInteractions.blur(el.$.input);
-        assert(validateSpy.calledOnce, 'expected validate to have been called once');
+        assert(stub.calledOnce, 'expected validate to have been called once');
         done();
       });
 
-      test('no auto validate before blur', function(done){
+      test('no auto validate before blur', function (done) {
         el.value = 'anything';
-        assert(validateSpy.notCalled, 'did not expect validate to have been called');
+        assert(stub.notCalled, 'did not expect validate to have been called');
         done();
       });
 
-      test('auto validate after blur', function(done){
+      test('auto validate after blur', function (done) {
         MockInteractions.blur(el.$.input);
         el.value = 'anything';
-        assert(validateSpy.calledTwice, 'expected validate to have been called twice');
+        assert(stub.calledTwice, 'expected validate to have been called twice');
         done();
+      });
+
+      // checks the behaviour of `iron-form` with different responses from `validate()`
+      suite('form', function () {
+        test('valid', function (done) {
+          stub.returns(true);
+          var valid = form.validate();
+          assert.equal(true, valid, 'expected form to be valid');
+          done();
+        });
+
+        test('invalid', function (done) {
+          stub.returns(false);
+          var valid = form.validate();
+          assert.equal(false, valid, 'expected form to be invalid');
+          done();
+        });
       });
     });
-
   </script>
 </body>
 

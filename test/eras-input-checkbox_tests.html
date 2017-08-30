@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-checkbox test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../../iron-form/iron-form.html'>
+  <link rel='import' href='../eras-input-checkbox.html'>
+  <link rel='import' href='../validators/eras-input-checkbox-required-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-checkbox-fixture'>
+    <template>
+      <form is='iron-form'>
+        <eras-input-checkbox id='checkbox'>
+          <eras-input-checkbox-required-validator id='validator'></eras-input-checkbox-required-validator>
+        </eras-input-checkbox>
+      </form>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-checkbox', function () {
+      var form;
+      var checkbox;
+      var validator;
+
+      setup(function () {
+        form = fixture('eras-input-checkbox-fixture');
+        checkbox = form.querySelector('#checkbox');
+        validator = checkbox.querySelector('#validator');
+      });
+
+      test('instantiation', function () {
+        assert.equal(form.is, 'iron-form');
+        assert.equal(checkbox.is, 'eras-input-checkbox');
+        assert.equal(validator.is, 'eras-input-checkbox-required-validator');
+      });
+
+      suite('validation', function () {
+        test('valid', function (done) {
+          checkbox.value = true;
+          var valid = checkbox.validate();
+          assert.equal(true, valid, 'expected checkbox to be valid when checked');
+          done();
+        });
+
+        test('invalid', function (done) {
+          checkbox.value = false;
+          var valid = checkbox.validate();
+          assert.equal(false, valid, 'expected checkbox to be invalid when unchecked');
+          done();
+        });
+
+        test('form valid', function (done) {
+          checkbox.value = true;
+          var valid = form.validate();
+          assert.equal(true, valid, 'expected form to be valid when checked');
+          done();
+        });
+
+        test('form invalid', function (done) {
+          checkbox.value = false;
+          var valid = form.validate();
+          assert.equal(false, valid, 'expected form to be invalid when unchecked');
+          done();
+        });
+
+        test('message', function(done){
+          checkbox.value = false;
+          validator.message = 'ERROR';
+          checkbox.validate();
+          assert.equal('ERROR', checkbox.errorMessage, 'expected the error message to have been copied from validator to checkbox');
+          done();
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
