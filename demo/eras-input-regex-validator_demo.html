@@ -31,6 +31,14 @@
         </eras-input>
       </template>
     </demo-snippet>
+    <h3>E-mail input</h3>
+    <demo-snippet>
+      <template>
+        <eras-input name='email' label='Enter a valid e-mail address'>
+          <eras-input-regex-validator class='validator' pattern='^[a-zA-Z0-9!#\$%&amp;&#39;\*\+\-\/=\?\^_`\{\|\}~\.]+@[a-zA-Z0-9-_]+\.[a-zA-Z0-9-.]+[a-zA-Z0-9]$' message='This is not a valid e-mail address'></eras-input-regex-validator>
+        </eras-input>
+      </template>
+    </demo-snippet>
   </div>
 </body>
 
