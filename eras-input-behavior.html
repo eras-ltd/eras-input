@@ -71,6 +71,17 @@
         type: Boolean,
         value: false
       },
+
+      /**
+       * Array of validation elements that will be used to validate
+       * this input. These element self register by firing the `eras-input-validator-registered`
+       * event which is picked up by the `_registerValidator` listener.
+       * @type {Element[]}
+       */
+      validators: {
+        type: Array,
+        value: []
+      },
     },
 
     listeners: {
@@ -78,6 +89,12 @@
     },
 
     ready: function () {
+      // when testing it appears that the test fixture is not sufficient to ensure 
+      // this array only contains the validators for this input. 
+      // for some reason when each new fixture is created this carries over the values
+      // from the previous fixure and you end up with a really long list of validators
+      this.validators = [];
+
       if (this.value !== undefined && this.value.length > 0)
         this.autoValidate = true;
 
@@ -89,31 +106,11 @@
     /**
      * Listens for the `eras-input-validator-registered` event fired
      * by the validators and registered `this` as the parentInput;
-     *
-     * It would be wonderful if we could use this to register the validators
-     * for use withing the inputs using this (like `iron-form` does with it's
-     * inputs) but sadly I can't make the `eras-input-comparison-validator` 
-     * implementation work. If the validator has been registered with the input
-     * here (eg this.validators.push(e.detail.validator)) then we should be able
-     * to just iterate over the validators when ever needed. But when doing this
-     * the comparison validator can't get the 'other input' in it's current state,
-     * it seems only able to get it in it's initial state! I am sure that there is 
-     * a way to do this; but I likely need to start with a new element to get it
-     * working (this method was a late change). ** NEEDS FIXING **
-     *
      * @param {Event} e `eras-input-validator-registered`
      */
     _registerValidator: function(e) {
       e.detail.validator.parentInput = this;
-    },
-
-    /**
-     * Gets the supplied validators as an array. 
-     * Validators must have a class of `.validator` to be picked up.
-     * @return {Element[]} Implementations of `Eras.InputValidatorBehavior`
-     */
-    _getValidators: function () {
-      return this.getContentChildren('#validators');
+      this.validators.push(e.detail.validator);
     },
 
     /**
@@ -122,12 +119,10 @@
      * @return {Boolean} false if invalid, true if not
      */
     validate: function () {
-      var validators = this._getValidators();
-
-      for (var i = 0; i < validators.length; i++) {
-        if (!validators[i].validate(this.value)) {
+      for (var i = 0; i < this.validators.length; i++) {
+        if (!this.validators[i].validate(this.value)) {
           this.invalid = true;
-          this.errorMessage = validators[i].message;
+          this.errorMessage = this.validators[i].message;
           return false; // not valid
         }
       }
@@ -141,9 +136,8 @@
      * Copies attributes from the validators to the input.
      */
     _onFocus: function () {
-      var validators = this._getValidators();
-      for (var i = 0; i < validators.length; i++)
-        validators[i].copyAttributes(this.$.input);
+      for (var i = 0; i < this.validators.length; i++)
+        this.validators[i].copyAttributes(this.$.input);
     },
 
     /**

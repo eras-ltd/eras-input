@@ -22,7 +22,7 @@
       <form id='form' is='iron-form'>
         <eras-input id='input-1' name='input-1'> </eras-input>
         <eras-input id='input-2' name='input-2'>
-          <eras-input-comparison-validator class='validator' id='validator' other-name='input-1' message='ERROR'></eras-input-comparison-validator>
+          <eras-input-comparison-validator id='validator' other-name='input-1' message='ERROR'></eras-input-comparison-validator>
         </eras-input>
         <div id='something-else'></div>
       </form>
@@ -365,7 +365,7 @@
         input1.value = 'def';
         Polymer.Base.fire('change', {}, { bubbles:true, node:input1 });
 
-        assert(inputSpy.calledTwice, 'expected `#input-2.validate()` to have been called twice');        
+        assert(inputSpy.calledTwice, 'expected `#input-2.validate()` to have been called twice, not ' + inputSpy.callCount + ' times');        
         assert(validatorSpy.withArgs('def').calledTwice, 'expected `#validator.validate(def)` to have been called once, not with ' + JSON.stringify(validatorSpy.args[1]));
         assert.equal(false, input1.invalid, 'expected `#input-1` to be valid');
         assert.equal(false, input2.invalid, 'expected `#input-2` to be valid after we update the value');

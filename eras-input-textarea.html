@@ -18,14 +18,14 @@
       }
     </style>
 
-    <content id='validators' select='.validator'></content>
+    <content></content>
 
     <paper-input-container 
       id='container' 
       invalid$='{{invalid}}' 
       disabled$='{{disabled}}'>
 
-      <content id='content'></content>
+      <content id='addons' select='.addon'></content>
 
       <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>

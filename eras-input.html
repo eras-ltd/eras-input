@@ -37,9 +37,9 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         margin-right: 5px;
       }
     </style>
-    
-    <content id='validators' select='.validator'></content>
-    
+        
+    <content></content>
+
     <paper-input-container 
       id='container' 
       invalid$='{{invalid}}' 
@@ -49,7 +49,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         <iron-icon icon='{{icon}}' prefix></iron-icon>
       </template>
       
-      <content id='content'></content>
+      <content id='addons' select='.addon'></content>
 
       <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>
