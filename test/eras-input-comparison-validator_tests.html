@@ -46,18 +46,11 @@
         validator = el.querySelector('#validator');
         inputSpy = sinon.spy(input2, 'validate');
         validatorSpy = sinon.spy(validator, 'validate');
-
-        // console.info(el, input1, input2, validator1, validator2);
       });
 
       teardown(function () {
         input2.validate.restore();
         validator.validate.restore();
-      });
-
-      test('find form', function () {
-        var form = validator._getParentForm();
-        assert.equal('iron-form', form.is, 'expected to find `iron-form`');
       });
 
       test('find other input', function () {

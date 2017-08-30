@@ -61,8 +61,6 @@ Used to compare the value of one input with that of another.
      * @return {Boolean} true if there is a value.
      */
     validate: function (value) {
-      // console.info('validator.validate', value);
-
       var otherInput = this._getOtherInput();
       if (!otherInput)
         console.warn('the other input could not be found, validation will not occur')
@@ -81,8 +79,6 @@ Used to compare the value of one input with that of another.
      * @return {Boolean} the result of the comparison (eg `abc` == `abc` = true)
      */
     _compare: function (value1, value2, comparison, type) {
-      // console.info('validator._compare', type, value1, comparison, value2);
-
       switch (type) {
         case 'string': return this._compareStrings(value1, value2, comparison);
         case 'number': return this._compareNumbers(value1, value2, comparison);
@@ -100,8 +96,6 @@ Used to compare the value of one input with that of another.
      * @return {Boolean} the result of the comparison (eg `abc` == `abc` = true)
      */
     _compareStrings: function (value1, value2, comparison) {
-      // console.info('validator._compareStrings', value1, value2, comparison);
-
       switch (comparison) {
         case '==': return value1.toString() == value2.toString();
         case '!=': return value1.toString() != value2.toString();
@@ -117,8 +111,6 @@ Used to compare the value of one input with that of another.
      * @return {Boolean} the result of the comparison (eg 1 == 1 = true)
      */
     _compareNumbers: function (value1, value2, comparison) {
-      console.info('validator._compareNumbers', value1, comparison, value2);
-
       var number1 = Number(value1);
       var number2 = Number(value2);
 
@@ -141,8 +133,6 @@ Used to compare the value of one input with that of another.
      * @return {Boolean} the result of the comparison (eg false == false = true)
      */
     _compareBooleans: function (value1, value2, comparison) {
-      // console.info('validator._compareBooleans', value1, value2, comparison);
-
       switch (comparison) {
         case '==': return value1 == value2;
         case '!=': return value1 != value2;
@@ -158,8 +148,6 @@ Used to compare the value of one input with that of another.
      * @return {Boolean} the result of the comparison (eg '1986-02-28' < '2000-01-01' = true)
      */
     _compareDates: function (value1, value2, comparison) {
-      // console.info('validator._compareNumbers', value1, comparison, value2);
-
       var date1 = moment(value1, 'YYYY-MM-DD');
       var date2 = moment(value2, 'YYYY-MM-DD');
 

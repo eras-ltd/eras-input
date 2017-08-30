@@ -73,6 +73,10 @@
       },
     },
 
+    listeners: {
+      'eras-input-validator-registered':'_registerValidator'
+    },
+
     ready: function () {
       if (this.value !== undefined && this.value.length > 0)
         this.autoValidate = true;
@@ -80,6 +84,27 @@
       var parent = this;
       this.$.input.addEventListener('focus', function(){ parent._onFocus() });
       this.$.input.addEventListener('blur', function(){ parent._onBlur() });
+    },   
+
+    /**
+     * Listens for the `eras-input-validator-registered` event fired
+     * by the validators and registered `this` as the parentInput;
+     *
+     * It would be wonderful if we could use this to register the validators
+     * for use withing the inputs using this (like `iron-form` does with it's
+     * inputs) but sadly I can't make the `eras-input-comparison-validator` 
+     * implementation work. If the validator has been registered with the input
+     * here (eg this.validators.push(e.detail.validator)) then we should be able
+     * to just iterate over the validators when ever needed. But when doing this
+     * the comparison validator can't get the 'other input' in it's current state,
+     * it seems only able to get it in it's initial state! I am sure that there is 
+     * a way to do this; but I likely need to start with a new element to get it
+     * working (this method was a late change). ** NEEDS FIXING **
+     *
+     * @param {Event} e `eras-input-validator-registered`
+     */
+    _registerValidator: function(e) {
+      e.detail.validator.parentInput = this;
     },
 
     /**

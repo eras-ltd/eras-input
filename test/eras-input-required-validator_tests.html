@@ -11,34 +11,68 @@
   <script src='../../web-component-tester/browser.js'></script>
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../eras-input.html'>
   <link rel='import' href='../validators/eras-input-required-validator.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-required-validator-fixture'>
     <template>
-      <eras-input-required-validator></eras-input-required-validator>
+      <eras-input id='input'>
+        <eras-input-required-validator id='validator' message='ERROR'></eras-input-comparison-validator>
+      </eras-input>
     </template>
   </test-fixture>
 
   <script>
     suite('eras-input-required-validator', function () {
       var el;
+      var val;   
+      var spy;   
 
       setup(function () {
         el = fixture('eras-input-required-validator-fixture');
+        val = el.querySelector('#validator');
+        spy = sinon.spy(el, 'validate');
+      });
+
+      teardown(function(){
+        spy.restore();
       });
 
       test('instantiation', function () {
-        assert.equal(el.is, 'eras-input-required-validator');
+        assert.equal(el.is, 'eras-input');
+        assert.equal(val.is, 'eras-input-required-validator');
+      });
+
+      test('get parent input', function (done) {
+        assert.equal(el, val.parentInput, 'expected `parentInput` to be `#input`');
+        done();
+      });
+
+      test('find form', function (done) {
+        var expected = document.querySelector('#form');
+        var actual = validator.parentInput._parentForm;
+        assert.equal(expected, actual);
+        done();
+      });
+
+      test('validate on blur', function (done) {
+        el.value = 'abc';
+        MockInteractions.blur(el.$.input);
+
+        assert.equal(false, el.invalid, 'expected `#input` to be valid');
+        assert(spy.calledOnce, 'expected `#input.validate()` to have been called once');
+
+        done();
       });
 
       suite('validate', function () {
         var dataTest = function (value, expected) {
           return function (done) {
-            var actual = el.validate(value);
+            var actual = val.validate(value);
             assert.equal(expected, actual, 'expected \'' + value + '\' to be ' + (expected ? 'valid' : 'invalid'));
-            assert.equal(!expected, el.invalid, 'expected `invalid` to have been set to ' + !expected);
+            assert.equal(!expected, val.invalid, 'expected `invalid` to have been set to ' + !expected);
             done();
           };
         };

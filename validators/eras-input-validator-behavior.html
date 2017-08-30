@@ -17,6 +17,21 @@
 
       /** Message to display if the value is invalid. */
       message: String,
+
+      /**
+       * The parent input of this validator, assigned by the inpute
+       * when registered.
+       * @type {Element}
+       */
+      parentInput: Object
+    },
+
+    /**
+     * Fires `eras-input-validator-registered` when attached so 
+     * the parent input can register it.
+     */
+    attached: function () {
+      this.fire('eras-input-validator-registered', { validator: this });
     },
 
     /**
@@ -33,6 +48,13 @@
      */
     copyAttributes: function (element) {
     }
+
+    /**
+     * Fired when the element is attached so that it can be registered with the
+     * parent input.
+     * @event eras-input-validator-registered
+     * @param {{validator:Element}} detail
+     */
   }
 
 </script>
