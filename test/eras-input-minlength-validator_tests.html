@@ -11,38 +11,50 @@
   <script src='../../web-component-tester/browser.js'></script>
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../eras-input.html'>
   <link rel='import' href='../validators/eras-input-minlength-validator.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-minlength-validator-fixture'>
     <template>
-      <eras-input-minlength-validator></eras-input-minlength-validator>
+      <eras-input id='input'>
+        <eras-input-minlength-validator id='validator'></eras-input-minlength-validator>
+      </eras-input>
     </template>
   </test-fixture>
 
   <script>
     suite('eras-input-minlength-validator', function () {
-      var el;
+      var input;
+      var validator;
 
       setup(function () {
-        el = fixture('eras-input-minlength-validator-fixture');
+        input = fixture('eras-input-minlength-validator-fixture');
+        validator = input.querySelector('#validator');
       });
 
-      test('instantiation', function () {
-        assert.equal(el.is, 'eras-input-minlength-validator');
+      test('instantiation', function (done) {
+        assert.equal(input.is, 'eras-input');
+        assert.equal(validator.is, 'eras-input-minlength-validator');
+        done();
+      });
+
+      test('char counter', function (done) {
+        assert.equal(true, input.showCharCounter, 'expected `showCharCounter` to have been set to true');
+        done();
       });
 
       suite('validate', function () {
-        setup(function(){
-          el.minlength = 3;
+        setup(function () {
+          validator.minlength = 3;
         });
 
         var dataTest = function (value, expected) {
           return function (done) {
-            var actual = el.validate(value);
+            var actual = validator.validate(value);
             assert.equal(expected, actual, 'expected \'' + value + '\' to be ' + (expected ? 'valid' : 'invalid'));
-            assert.equal(!expected, el.invalid, 'expected `invalid` to have been set to ' + !expected);
+            assert.equal(!expected, validator.invalid, 'expected `invalid` to have been set to ' + !expected);
             done();
           };
         };

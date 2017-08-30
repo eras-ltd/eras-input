@@ -11,38 +11,49 @@
   <script src='../../web-component-tester/browser.js'></script>
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='../eras-input.html'>
   <link rel='import' href='../validators/eras-input-maxlength-validator.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-maxlength-validator-fixture'>
     <template>
-      <eras-input-maxlength-validator></eras-input-maxlength-validator>
+      <eras-input id='input'>
+        <eras-input-maxlength-validator id='validator'></eras-input-maxlength-validator>
+      </eras-input>
     </template>
   </test-fixture>
 
   <script>
     suite('eras-input-maxlength-validator', function () {
-      var el;
+      var input;
+      var validator;
 
       setup(function () {
-        el = fixture('eras-input-maxlength-validator-fixture');
+        input = fixture('eras-input-maxlength-validator-fixture');
+        validator = input.querySelector('#validator');
       });
 
       test('instantiation', function () {
-        assert.equal(el.is, 'eras-input-maxlength-validator');
+        assert.equal(input.is, 'eras-input');
+        assert.equal(validator.is, 'eras-input-maxlength-validator');
+      });
+
+      test('char counter', function (done) {
+        assert.equal(true, input.showCharCounter, 'expected `showCharCounter` to have been set to true');
+        done();
       });
 
       suite('validate', function () {
-        setup(function(){
-          el.maxlength = 2;
+        setup(function () {
+          validator.maxlength = 2;
         });
 
         var dataTest = function (value, expected) {
           return function (done) {
-            var actual = el.validate(value);
+            var actual = validator.validate(value);
             assert.equal(expected, actual, 'expected \'' + value + '\' to be ' + (expected ? 'valid' : 'invalid'));
-            assert.equal(!expected, el.invalid, 'expected `invalid` to have been set to ' + !expected);
+            assert.equal(!expected, validator.invalid, 'expected `invalid` to have been set to ' + !expected);
             done();
           };
         };
