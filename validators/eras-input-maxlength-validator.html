@@ -21,6 +21,11 @@ If a value is required then you must also supply an
       Polymer.ErasInputValidatorBehavior
     ],
 
+    /** Set `parentInput.showCharCounter` to `true` */
+    attached: function () {
+      this.parentInput.showCharCounter = true;
+    },
+
     /**
      * Ensures the value is no longer than specified in `maxlength`.
      * @param {Object} value The value to check.
