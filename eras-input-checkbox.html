@@ -16,7 +16,6 @@ Property|Description|Default
 --------|-----------|-------
 `--theme-colour`|Colour of the selected date's cell|`--primary-color`
 `--eras-input-subtitle`|Colour for subtitles|`--paper-grey-700`
-`--eras-input-invalid`|Colour when invalid|`--error-color`
 
 @demo demo/eras-input-checkbox_demo.html
 -->
@@ -54,22 +53,22 @@ Property|Description|Default
 
       #error-message span {
         display: none;
-        color: var(--eras-input-invalid, --error-color);
+        color: var(--error-color);
         font-size: 12px;
         line-height: 20px;
       }
 
        :host[invalid] paper-checkbox {
-        --paper-checkbox-unchecked-color: var(--eras-input-invalid, --error-color);
+        --paper-checkbox-unchecked-color: var(--error-color);
       }
 
        :host[invalid] iron-label {
-        color: var(--eras-input-invalid, --error-color);
-        border-bottom-color: var(--eras-input-invalid, --error-color);
+        color: var(--error-color);
+        border-bottom-color: var(--error-color);
       }
 
        :host[invalid] #subtitle {
-        color: var(--eras-input-invalid, --error-color);
+        color: var(--error-color);
       }
 
        :host[invalid] #error-message span {
