@@ -113,7 +113,6 @@
     _registerValidator: function(e) {
       e.detail.validator.parentInput = this;
       this.validators.push(e.detail.validator);
-      e.detail.validator.copyAttributes(this.$.input);
     },
 
     /**

@@ -12,6 +12,11 @@
       Polymer.ErasInputValidatorBehavior
     ],
 
+    /** Sets the `required` attribute on the parents input */
+    attached: function() {
+      Polymer.dom(this.parentInput.$.input).setAttribute('required', '');
+    },
+
     /**
      * Ensures a value is provided.
      * @param {Object} value The value to check.
@@ -26,14 +31,6 @@
         this.invalid = !(value.toString());
 
       return !this.invalid;
-    },
-
-    /**
-     * Adds the `required` attribute to the input
-     * @param {Element} element input
-     */
-    copyAttributes: function (element) {
-      Polymer.dom(element).setAttribute('required', '');
     }
   });
 

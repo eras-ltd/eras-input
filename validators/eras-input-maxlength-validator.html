@@ -21,9 +21,13 @@ If a value is required then you must also supply an
       Polymer.ErasInputValidatorBehavior
     ],
 
-    /** Set `parentInput.showCharCounter` to `true` */
+    /** 
+     * Set `parentInput.showCharCounter` to `true` and 
+     * set `maxlength` attribute on parents input 
+     */
     attached: function () {
       this.parentInput.showCharCounter = true;
+      Polymer.dom(this.parentInput.$.input).setAttribute('maxlength', this.maxlength);
     },
 
     /**
@@ -40,14 +44,6 @@ If a value is required then you must also supply an
         this.invalid = value.toString().length > this.maxlength;
 
       return !this.invalid;
-    },
-
-    /**
-     * Adds the `maxlength` attribute to the input
-     * @param {Element} element input
-     */
-    copyAttributes: function (element) {
-      Polymer.dom(element).setAttribute('maxlength', this.maxlength);
     }
   });
 
