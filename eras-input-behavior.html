@@ -99,18 +99,21 @@
         this.autoValidate = true;
 
       var parent = this;
-      this.$.input.addEventListener('focus', function(){ parent._onFocus() });
       this.$.input.addEventListener('blur', function(){ parent._onBlur() });
     },   
 
     /**
      * Listens for the `eras-input-validator-registered` event fired
-     * by the validators and registered `this` as the parentInput;
+     * by the validators and:
+     * - set `validator.parentInput` to `this`
+     * - add the validator to `validators` array
+     * - copy attributes to the input from the validator
      * @param {Event} e `eras-input-validator-registered`
      */
     _registerValidator: function(e) {
       e.detail.validator.parentInput = this;
       this.validators.push(e.detail.validator);
+      e.detail.validator.copyAttributes(this.$.input);
     },
 
     /**
@@ -131,14 +134,14 @@
       return true; // if all validators passed
     },
 
-    /**
-     * Called when the user focuses on this element. 
-     * Copies attributes from the validators to the input.
-     */
-    _onFocus: function () {
-      for (var i = 0; i < this.validators.length; i++)
-        this.validators[i].copyAttributes(this.$.input);
-    },
+    // /**
+    //  * Called when the user focuses on this element. 
+    //  * Copies attributes from the validators to the input.
+    //  */
+    // _onFocus: function () {
+    //   for (var i = 0; i < this.validators.length; i++)
+    //     this.validators[i].copyAttributes(this.$.input);
+    // },
 
     /**
      * Called when the user clicks off this element. 
