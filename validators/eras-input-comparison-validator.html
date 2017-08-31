@@ -45,7 +45,7 @@ Used to compare the value of one input with that of another.
       Polymer.ErasInputValidatorBehavior
     ],
 
-    ready: function () {
+    attached: function () {
       // add an event listener to the other input that triggers validation of
       // the input that is the parent to this validator on changes
       var other = this._getOtherInput();
