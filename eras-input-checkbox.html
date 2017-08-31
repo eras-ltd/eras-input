@@ -75,7 +75,7 @@ Property|Description|Default
         display: inline;
       }
     </style>
-    <content></content>
+    
     <iron-label class='layout horizontal center'>
       <paper-checkbox id='input' iron-label-target checked$='{{value}}' disabled$='{{disabled}}' on-change='_onChange' invalid$='{{invalid}}'></paper-checkbox>
       <div id='label'>
@@ -89,6 +89,8 @@ Property|Description|Default
       <span>{{errorMessage}}</span>
     </div>
     <input type='hidden' name='{{name}}' value='{{value}}'>
+
+    <content></content>
   </template>
   <script>
     Polymer({
