@@ -15,21 +15,28 @@ If a value is required then you must also supply an
     is: 'eras-input-maxlength-validator',
     properties: {
       /** The maximum allowed length. */
-      maxlength: Number
+      maxlength: {
+        type: Number,
+        observer: '_maxlengthChanged'
+      }
     },
     behaviors: [
       Polymer.ErasInputValidatorBehavior
     ],
 
-    /** 
-     * Set `parentInput.showCharCounter` to `true` and 
-     * set `maxlength` attribute on parents input 
-     */
+    /** Set `parentInput.showCharCounter` to `true` */
     attached: function () {
       this.parentInput.showCharCounter = true;
+    },
 
+    /**
+     * Observes the `maxlength` property and updates
+     * the appropriate attribute for the specified elements.
+     * @param Number maxlength
+     */
+    _maxlengthChanged: function (maxlength) {
       for (var i = 0; i < this.attributeTargets.length; i++)
-        this.attributeTargets[i].setAttribute('maxlength', this.maxlength);
+        this.attributeTargets[i].setAttribute('maxlength', maxlength);
     },
 
     /**
