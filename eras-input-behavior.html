@@ -85,7 +85,7 @@
     },
 
     listeners: {
-      'eras-input-validator-registered':'_registerValidator'
+      'eras-input-validator-registered': '_registerValidator'
     },
 
     ready: function () {
@@ -99,8 +99,8 @@
         this.autoValidate = true;
 
       var parent = this;
-      this.$.input.addEventListener('blur', function(){ parent._onBlur() });
-    },   
+      this.$.input.addEventListener('blur', function () { parent._onBlur() });
+    },
 
     /**
      * Listens for the `eras-input-validator-registered` event fired
@@ -110,7 +110,7 @@
      * - copy attributes to the input from the validator
      * @param {Event} e `eras-input-validator-registered`
      */
-    _registerValidator: function(e) {
+    _registerValidator: function (e) {
       e.detail.validator.parentInput = this;
       this.validators.push(e.detail.validator);
       this._setValidatorAttributeTargets(e.detail.validator);
@@ -121,8 +121,8 @@
      * validators should copy attributes to.
      * @param {Element} validator
      */
-    _setValidatorAttributeTargets: function(validator) {
-
+    _setValidatorAttributeTargets: function (validator) {
+      
     },
 
     /**

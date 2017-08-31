@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-datetime demo</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+
+  <link rel='import' href='../../iron-demo-helpers/demo-pages-shared-styles.html'>
+  <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
+  <link rel='import' href='../validators/eras-input-required-validator.html'>
+  <link rel='import' href='../validators/eras-input-datetime-min-validator.html'>
+  <link rel='import' href='../validators/eras-input-datetime-max-validator.html'>
+  <link rel='import' href='../eras-input-datetime.html'>
+
+  <style is='custom-style' include='demo-pages-shared-styles'>
+    eras-input-datetime {
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class='vertical-section-container centered'>
+    <h3>Basic eras-input-datetime demo</h3>
+    <demo-snippet>
+      <template>
+        <eras-input-datetime label='Enter a date'>
+          <eras-input-required-validator message='You must provide a date'></eras-input-required-validator>
+          <eras-input-datetime-max-validator max='2020-09-25 02:30 PM' message='Anything after 2:30pm on 25th Sept 2020 is forbidden!'></eras-input-datetime-max-validator>
+          <eras-input-datetime-min-validator future message='Only dates in the future are permitted'></eras-input-datetime-min-validator>
+        </eras-input-datetime>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>

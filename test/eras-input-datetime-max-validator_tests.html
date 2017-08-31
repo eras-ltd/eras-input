@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-datetime-max-validator test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <script src='../bower_components/moment/moment.js'></script>
+  <link rel='import' href='../validators/eras-input-datetime-max-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-datetime-max-validator-fixture'>
+    <template>
+      <eras-input-datetime-max-validator></eras-input-datetime-max-validator>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-datetime-max-validator', function () {
+      var el;
+
+      setup(function () {
+        el = fixture('eras-input-datetime-max-validator-fixture');
+      });
+
+      suite('setup', function () {
+        var warn;
+
+        setup(function () {
+          warn = sinon.stub(console, 'warn');
+        });
+
+        teardown(function () {
+          console.warn.restore();
+        });
+
+        test('instantiation', function () {
+          assert.equal(el.is, 'eras-input-datetime-max-validator');
+        });
+
+        test('max check', function (done) {
+          el.max = 'xxx';
+          assert(warn.calledOnce, 'expected `console.warn()` to have been called once');
+          done();
+        });
+
+        test('accuracy coersion', function (done) {
+          el.accuracy = 'xxx';
+          assert(warn.calledOnce, 'expected `console.warn()` to have been called once');
+          assert.equal(el.accuracy, 'minute', 'expected `el.accuracy` to have been set to `minute` not `' + el.accuracy + '`');
+          done();
+        });
+
+        test('past', function (done) {
+          el.past = true;
+          assert.equal(moment.utc().format('YYYY-MM-DD hh:mm A'), el.max, 'expected `max` to have been set to now');
+          done();
+        });
+      });
+
+      suite('validation', function () {
+        suite('day', function () {
+          setup(function () {
+            el.accuracy = 'day';
+            el.max = '2017-06-15 11:30 AM';
+          });
+
+          var dataTest = function (date, expected) {
+            return function (done) {
+              var valid = el.validate(date);
+              assert.equal(expected, valid, 'expected `' + date + '` to be ' + (expected ? 'valid' : 'invalid') + ' with `' + el.max + '` as the maximum');
+              done();
+            };
+          };
+
+          var data = [
+            { name:'day after', date: '2017-06-16 11:30 AM', expected: false },
+            { name:'same', date: '2017-06-15 11:30 AM', expected: true },
+            { name:'hour before', date: '2017-06-15 10:30 AM', expected: true },
+            { name:'day before', date: '2017-06-14 11:30 AM', expected: true }
+          ];
+
+          for (var i = 0; i < data.length; i++)
+            test(data[i].name, dataTest(data[i].date, data[i].expected));
+        });
+
+        suite('minute', function () {
+          setup(function () {
+            el.accuracy = 'minute';
+            el.max = '2017-06-15 11:30 AM';
+          });
+
+          var dataTest = function (date, expected) {
+            return function (done) {
+              var valid = el.validate(date);
+              assert.equal(expected, valid, 'expected `' + date + '` to be ' + (expected ? 'valid' : 'invalid') + ' with `' + el.max + '` as the maximum');
+              done();
+            };
+          };
+
+          var data = [
+            { name:'same minute', date: '2017-06-15 11:30 AM', expected: true }, 
+            { name:'minute after', date: '2017-06-15 11:31 AM', expected: false }, 
+            { name:'minute before', date: '2017-06-15 11:29 AM', expected: true }, 
+            { name:'day after', date: '2017-06-16 11:30 AM', expected: false }, 
+            { name:'day before', date: '2017-06-14 11:30 AM', expected: true }, 
+            { name:'same but PM', date: '2017-06-15 11:30 PM', expected: false }
+          ];
+
+          for (var i = 0; i < data.length; i++)
+            test(data[i].name, dataTest(data[i].date, data[i].expected));
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

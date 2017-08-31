@@ -1,0 +1,182 @@
+<link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-icon/iron-icon.html'>
+<link rel='import' href='../iron-input/iron-input.html'>
+<link rel='import' href='../neon-animation/animations/scale-up-animation.html' />
+<link rel='import' href='../neon-animation/animations/fade-out-animation.html' />
+<link rel='import' href='../paper-dialog/paper-dialog.html'>
+<link rel='import' href='../paper-icon-button/paper-icon-button.html'>
+<link rel='import' href='../paper-input/paper-input-container.html'>
+<link rel='import' href='../paper-input/paper-input-error.html'>
+<link rel='import' href='../eras-date/eras-date.html'>
+<link rel='import' href='../eras-time/eras-time.html'>
+<link rel='import' href='../eras-external/moment.html'>
+<link rel='import' href='eras-input-behavior.html'>
+<!--
+`eras-input-datetime`
+@demo demo/eras-input-datetime_demo.html
+-->
+<dom-module id='eras-input-datetime'>
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+
+      eras-date,
+      eras-time {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      eras-time {
+        border-style: solid;
+        border-color: var(--paper-grey-300);
+        border-width: 1px 0;
+        margin: 0 auto;
+      }
+
+      #picker div.buttons {
+        padding: 8px;
+      }
+
+      #container paper-icon-button[prefix] {
+        padding: 0;
+        padding-right: 4px;
+        height: 24px;
+        width: 28px;
+      }
+    </style>
+
+    <paper-dialog id='picker' entry-animation='scale-up-animation' exit-animation='fade-out-animation' with-backdrop>
+      <eras-date id='date' value='{{_date}}'></eras-date>
+      <eras-time id='time' value='{{_time}}'></eras-time>
+      <div class='buttons layout horizontal center'>
+        <paper-icon-button icon='today' on-tap='_today'></paper-icon-button>
+        <div class='flex'></div>
+        <paper-icon-button icon='close' on-tap='_close'></paper-icon-button>
+        <paper-icon-button icon='check' on-tap='_ok'></paper-icon-button>
+      </div>
+    </paper-dialog>
+
+    <paper-input-container id="container" invalid$="{{invalid}}" disabled$="{{disabled}}">
+      <paper-icon-button icon="today" prefix on-tap="_open"></paper-icon-button>
+      <template is="dom-if" if="{{label}}">
+        <label>{{label}}</label>
+      </template>
+      <input id="input" is="iron-input" bind-value="{{_display}}" readonly on-tap="_open">
+      <paper-input-error>{{errorMessage}}</paper-input-error>
+    </paper-input-container>
+
+    <content></content>
+  </template>
+  <script>
+    Polymer({
+      is: 'eras-input-datetime',
+      properties: {
+        /** The value for this input as a **UTC** datetime in the `YYYY-MM-DD hh:mm A` format. */
+        value: {
+          type: String,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /** Computed from `value` this is the **local** datetime in the `YYYY-MM-DD hh:mm A` format. */
+        _local: {
+          type: String,
+          computed: '_computeLocal(value)'
+        },
+
+        /** Computed from `local` displays the date in the `Do MMM YYYY hh:mm A` format */
+        _display: {
+          type: String,
+          computed: '_computeDisplay(_local)'
+        },
+
+        /** The date computed from `local` in 'YYYY-MM-DD' format. */
+        _date: {
+          type: String,
+          computed: '_computeDate(_local)'
+        },
+
+        /** The time computed from `local` in 'hh:mm A' format. */
+        _time: {
+          type: String,
+          computed: '_computeTime(_local)'
+        }
+      },
+
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.ErasInputBehavior
+      ],
+
+      /**
+       * Specify which elements validators should append attributes to.
+       * @param {Element} validator
+       */
+      _setValidatorAttributeTargets: function (validator) {
+        validator.attributeTargets.push(this.$.date);
+        validator.attributeTargets.push(this.$.input);
+      },
+
+      /**
+       * Computes the **local** datetime from `value` which is **UTC**
+       * @param {String} value `YYYY-MM-DD hh:mm A` local
+       * @return {String} `YYYY-MM-DD hh:mm A` UTC
+       */
+      _computeLocal: function (value) {
+        return moment.utc(value, 'YYYY-MM-DD hh:mm A').local().format('YYYY-MM-DD hh:mm A')
+      },
+
+      /**
+       * Computes `display` from `local`
+       * @param {String} value `YYYY-MM-DD hh:mm A` local
+       * @return {String} `Do MMM YYYY hh:mm A` display
+       */
+      _computeDisplay: function (local) {
+        return moment(local, 'YYYY-MM-DD hh:mm A').format('Do MMM YYYY hh:mm A');
+      },
+
+      /**
+       * Computes the date from `local`
+       * @param {String} local `YYYY-MM-DD hh:mm A`
+       * @return {String} `YYYY-MM-DD`
+       */
+      _computeDate: function (local) {
+        return moment(local, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD');
+      },
+
+      /**
+       * Computes the time from `local`
+       * @param {String} local `YYYY-MM-DD hh:mm A`
+       * @return {String} `hh:mm A`
+       */
+      _computeTime: function (local) {
+        return moment(local, 'YYYY-MM-DD hh:mm A').format('hh:mm A');
+      },
+
+      /** Opens the datetime picker */
+      _open: function () {
+        this.$.picker.open();
+      },
+
+      /** Closes the datetime picker */
+      _close: function () {        
+        this.$.picker.close();
+        this.validate();
+      },
+
+      /** 
+       * Closes the picker and converts the date & time from **local**
+       * to **UTC** before updating `value`
+       */
+      _ok: function () {
+        var date = this.$.date.value;
+        var time = this.$.time.value;
+        this.value = moment(date + ' ' + time, 'YYYY-MM-DD hh:mm A').utc().format('YYYY-MM-DD hh:mm A');
+        this._close();
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,90 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../../eras-external/moment.html'>
+<link rel='import' href='eras-input-validator-behavior.html'>
+<!--
+`eras-input-datetime-min-validator`
+-->
+<script>
+  Polymer({
+    is: 'eras-input-datetime-min-validator',
+    properties: {
+      /** The minimum allowed datetime in the `YYYY-MM-DD hh:mm A` format */
+      min: {
+        type: String,
+        observer: '_minChanged'
+      },
+
+      /**
+       * The level of precision that will be used when comparing the value
+       * against the `min`: 
+       * `day` | `minute`
+       */
+      accuracy: {
+        type: String,
+        value: 'minute',
+        observer: '_accuracyChanged'
+      },
+
+      /**
+       * When set to true only dates in the future will be allowed.
+       * Overrides any value set for `min`
+       */
+      future: {
+        type: Boolean,
+        value: false,
+        observer: '_futureChanged'
+      },
+    },
+    behaviors: [
+      Polymer.ErasInputValidatorBehavior
+    ],
+
+    /** Sets the `min` attribute of the specified elements */
+    attached: function () {
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('min', this.min);
+    },
+
+    /**
+     * Validates the provided input against `min`
+     * @param String value
+     */
+    validate: function (value) {
+      var f = 'YYYY-MM-DD hh:mm A';
+      var min = moment(this.min, f);
+      return moment(value, f).isSameOrAfter(min, this.accuracy);
+    },
+
+    /**
+     * Observes changes to `accuracy` and ensures that a valid
+     * value has been provided. Falls back to `minute`.
+     */
+    _accuracyChanged: function (accuracy) {
+      var allowed = ['day', 'minute'];
+      if (allowed.indexOf(accuracy) < 0) {
+        console.warn('the value `' + accuracy + '` is not valid for `accuracy` defaulting to `minute`, valid options are: ' + JSON.stringify(allowed));
+        this.accuracy = 'minute';
+      }
+    },
+
+    /** 
+     * Observes changes to `min` and ensures that a valid value has been provided.
+     * Also updates the min attribute of specified elements.
+     */
+    _minChanged: function (min) {
+      if (!min.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/))
+        console.warn('`min` must be of `YYYY-MM-DD hh:mm A` format; this is invalid: ' + min);
+
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('min', this.min);
+    },
+
+    /** If `future` is true then set `min` to the current datetime. */
+    _futureChanged: function (future) {
+      if (future)
+        this.min = moment.utc().format('YYYY-MM-DD hh:mm A');
+    }
+
+  });
+
+</script>

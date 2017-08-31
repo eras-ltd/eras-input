@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-datetime-min-validator test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <script src='../bower_components/moment/moment.js'></script>
+  <link rel='import' href='../validators/eras-input-datetime-min-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='eras-input-datetime-min-validator-fixture'>
+    <template>
+      <eras-input-datetime-min-validator></eras-input-datetime-min-validator>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('eras-input-datetime-min-validator', function () {
+      var el;
+
+      setup(function () {
+        el = fixture('eras-input-datetime-min-validator-fixture');
+      });
+
+      suite('setup', function () {
+        var warn;
+
+        setup(function () {
+          warn = sinon.stub(console, 'warn');
+        });
+
+        teardown(function () {
+          console.warn.restore();
+        });
+
+        test('instantiation', function () {
+          assert.equal(el.is, 'eras-input-datetime-min-validator');
+        });
+
+        test('min check', function (done) {
+          el.min = 'xxx';
+          assert(warn.calledOnce, 'expected `console.warn()` to have been called once');
+          done();
+        });
+
+        test('accuracy coersion', function (done) {
+          el.accuracy = 'xxx';
+          assert(warn.calledOnce, 'expected `console.warn()` to have been called once');
+          assert.equal(el.accuracy, 'minute', 'expected `el.accuracy` to have been set to `minute` not `' + el.accuracy + '`');
+          done();
+        });
+
+        test('future', function (done) {
+          el.future = true;
+          assert.equal(moment.utc().format('YYYY-MM-DD hh:mm A'), el.min, 'expected `min` to have been set to now');
+          done();
+        });
+      });
+
+      suite('validation', function () {
+        suite('day', function () {
+          setup(function () {
+            el.accuracy = 'day';
+            el.min = '2017-06-15 11:30 PM';
+          });
+
+          var dataTest = function (date, expected) {
+            return function (done) {
+              var valid = el.validate(date);
+              assert.equal(expected, valid, 'expected `' + date + '` to be ' + (expected ? 'valid' : 'invalid') + ' with `' + el.min + '` as the minimum');
+              done();
+            };
+          };
+
+          var data = [
+            { name:'day after', date: '2017-06-16 11:30 PM', expected: true },
+            { name:'same', date: '2017-06-15 11:30 PM', expected: true },
+            { name:'hour before', date: '2017-06-15 10:30 PM', expected: true },
+            { name:'day before', date: '2017-06-14 11:30 PM', expected: false }
+          ];
+
+          for (var i = 0; i < data.length; i++)
+            test(data[i].name, dataTest(data[i].date, data[i].expected));
+        });
+
+        suite('minute', function () {
+          setup(function () {
+            el.accuracy = 'minute';
+            el.min = '2017-06-15 11:30 PM';
+          });
+
+          var dataTest = function (date, expected) {
+            return function (done) {
+              var valid = el.validate(date);
+              assert.equal(expected, valid, 'expected `' + date + '` to be ' + (expected ? 'valid' : 'invalid') + ' with `' + el.min + '` as the minimum');
+              done();
+            };
+          };
+
+          var data = [
+            { name: 'same', date: '2017-06-15 11:30 PM', expected: true }, // minute before  
+            { name: 'day after', date: '2017-06-16 11:30 PM', expected: true }, // day after
+            { name: 'day before', date: '2017-06-14 11:30 PM', expected: false }, // same
+            { name: 'minute after', date: '2017-06-15 11:31 PM', expected: true }, // minute after
+            { name: 'minute before', date: '2017-06-15 11:29 PM', expected: false }, // same but AM
+            { name: 'same but AM', date: '2017-06-1A 11:30 AM', expected: false }, // day before
+          ];
+
+          for (var i = 0; i < data.length; i++)
+            test(data[i].name, dataTest(data[i].date, data[i].expected));
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

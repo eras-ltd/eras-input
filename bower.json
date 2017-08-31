@@ -9,7 +9,11 @@
     "eras-external": "eras-ltd/eras-external#^0.0.1",
     "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#1",
     "paper-checkbox": "1",
-    "iron-label": "1"
+    "iron-label": "1",
+    "eras-date": "eras-ltd/eras-date",
+    "eras-time": "eras-ltd/eras-time",
+    "paper-dialog": "1",
+    "paper-icon-button": "1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

@@ -1,0 +1,90 @@
+<link rel='import' href='../../polymer/polymer.html'>
+<link rel='import' href='../../eras-external/moment.html'>
+<link rel='import' href='eras-input-validator-behavior.html'>
+<!--
+`eras-input-datetime-max-validator`
+-->
+<script>
+  Polymer({
+    is: 'eras-input-datetime-max-validator',
+    properties: {
+      /** The maximum allowed datetime in the `YYYY-MM-DD hh:mm A` format */
+      max: {
+        type: String,
+        observer: '_maxChanged'
+      },
+
+      /**
+       * The level of precision that will be used when comparing the value
+       * against the `max`: 
+       * `day` | `minute`
+       */
+      accuracy: {
+        type: String,
+        value: 'minute',
+        observer: '_accuracyChanged'
+      },
+
+      /**
+       * When set to true only dates in the past will be allowed.
+       * Overrides any value set for `max`
+       */
+      past: {
+        type: Boolean,
+        value: false,
+        observer: '_pastChanged'
+      },
+    },
+    behaviors: [
+      Polymer.ErasInputValidatorBehavior
+    ],
+
+    /** Sets the `max` attribute of the specified elements */
+    attached: function () {
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('max', this.max);
+    },
+
+    /**
+     * Validates the provided input against `max`
+     * @param String value
+     */
+    validate: function (value) {
+      var f = 'YYYY-MM-DD hh:mm A';
+      var max = moment(this.max, f);
+      return moment(value, f).isSameOrBefore(max, this.accuracy);
+    },
+
+    /**
+     * Observes changes to `accuracy` and ensures that a valid
+     * value has been provided. Falls back to `minute`.
+     */
+    _accuracyChanged: function (accuracy) {
+      var allowed = ['day', 'minute'];
+      if (allowed.indexOf(accuracy) < 0) {
+        console.warn('the value `' + accuracy + '` is not valid for `accuracy` defaulting to `minute`, valid options are: ' + JSON.stringify(allowed));
+        this.accuracy = 'minute';
+      }
+    },
+
+    /** 
+     * Observes changes to `min` and ensures that a valid value has been provided.
+     * Also updates the min attribute of specified elements.
+     */
+    _maxChanged: function (max) {
+      if (!max.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/))
+        console.warn('`max` must be of `YYYY-MM-DD hh:mm A` format; this is invalid: ' + max);
+
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('max', this.v);
+    },
+
+    /** If `past` is true then set `max` to the current datetime. */
+    _pastChanged: function (past) {
+      if (past)
+        this.max = moment.utc().format('YYYY-MM-DD hh:mm A');
+    }
+
+  });
+
+</script>
