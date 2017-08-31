@@ -16,9 +16,15 @@
       Polymer.ErasInputValidatorBehavior
     ],
 
-    /** Set `parentInput.showCharCounter` to `true` */
+    /** 
+     * Set `parentInput.showCharCounter` to `true`
+     * and sets the `minlength` attribute for the specified elements.
+     */
     attached: function () {
       this.parentInput.showCharCounter = true;
+
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('minlength', this.minlength);
     },
 
     /**

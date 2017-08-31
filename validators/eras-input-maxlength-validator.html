@@ -24,9 +24,15 @@ If a value is required then you must also supply an
       Polymer.ErasInputValidatorBehavior
     ],
 
-    /** Set `parentInput.showCharCounter` to `true` */
+    /** 
+     * Set `parentInput.showCharCounter` to `true`
+     * and sets `maxlength` attribute on the specified elements.
+     */
     attached: function () {
       this.parentInput.showCharCounter = true;
+
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('maxlength', this.maxlength);
     },
 
     /**
