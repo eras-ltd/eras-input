@@ -16,7 +16,7 @@
        :host {
         display: block;
       }
-    </style>    
+    </style>
 
     <paper-input-container 
       id='container' 
@@ -33,9 +33,9 @@
         id='input' 
         class='paper-input-input' 
         name='{{name}}' 
-        bind-value='{{value}}'
+        bind-value='{{value}}' 
         readonly$='{{readonly}}'
-        rows$='{{rows}}'
+        rows$='{{rows}}' 
         max-rows$='{{maxRows}}'>
       </iron-autogrow-textarea>
 
@@ -92,6 +92,14 @@
         Polymer.IronFormElementBehavior,
         Polymer.ErasInputBehavior
       ],
+
+      /**
+       * Specify which elements validators should append attributes to.
+       * @param {Element} validator
+       */
+      _setValidatorAttributeTargets: function (validator) {
+        validator.attributeTargets.push(this.$.input);
+      },
     });
   </script>
 </dom-module>

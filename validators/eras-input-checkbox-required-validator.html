@@ -17,8 +17,9 @@ Use case is basically only: "tick here to confirm X before proceeding"
     ],
 
     /** Sets the `required` attribute on the parents input */
-    attached: function() {
-      Polymer.dom(this.parentInput.$.input).setAttribute('required', '');
+    attached: function () {
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('required', '');
     },
 
     /**
@@ -27,7 +28,7 @@ Use case is basically only: "tick here to confirm X before proceeding"
      * @return {Boolean} true if it's checked.
      */
     validate: function (value) {
-      if(!value)
+      if (!value)
         return false;
       else
         return true;

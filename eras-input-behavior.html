@@ -113,6 +113,16 @@
     _registerValidator: function(e) {
       e.detail.validator.parentInput = this;
       this.validators.push(e.detail.validator);
+      this._setValidatorAttributeTargets(e.detail.validator);
+    },
+
+    /**
+     * Implement this function to state which elements the
+     * validators should copy attributes to.
+     * @param {Element} validator
+     */
+    _setValidatorAttributeTargets: function(validator) {
+
     },
 
     /**

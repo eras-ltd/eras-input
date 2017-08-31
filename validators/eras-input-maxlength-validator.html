@@ -27,7 +27,9 @@ If a value is required then you must also supply an
      */
     attached: function () {
       this.parentInput.showCharCounter = true;
-      Polymer.dom(this.parentInput.$.input).setAttribute('maxlength', this.maxlength);
+
+      for (var i = 0; i < this.attributeTargets.length; i++)
+        this.attributeTargets[i].setAttribute('maxlength', this.maxlength);
     },
 
     /**

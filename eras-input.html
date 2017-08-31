@@ -36,17 +36,17 @@ insed the element implementing `IronFormElementBehavior`... fun times!
       paper-input-container ::content iron-icon {
         margin-right: 5px;
       }
-    </style>          
+    </style>
 
     <paper-input-container 
       id='container' 
       invalid$='{{invalid}}' 
       disabled$='{{disabled}}'>
-      
+
       <template is='dom-if' if='{{icon}}'>
         <iron-icon icon='{{icon}}' prefix></iron-icon>
       </template>
-      
+
       <content id='addons' select='.addon'></content>
 
       <template is='dom-if' if='{{label}}'>
@@ -58,27 +58,27 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         is='iron-input' 
         name='{{name}}' 
         bind-value='{{value}}' 
-        readonly$={{readonly}}        
+        readonly$={{readonly}} 
         type$='{{type}}' 
-        autocomplete$='{{autocomplete}}' 
+        autocomplete$='{{autocomplete}}'
         prevent-invalid-input$='{{_preventInvalidInput}}' 
         allowed-pattern$='{{allowedPattern}}' />
-      
-      <paper-input-error>{{errorMessage}}</paper-input-error> 
-      
+
+      <paper-input-error>{{errorMessage}}</paper-input-error>
+
       <template is='dom-if' if='{{showCharCounter}}'>
         <paper-input-char-counter></paper-input-char-counter>
-      </template>    
-      
+      </template>
+
     </paper-input-container>
 
     <content></content>
   </template>
-  
+
   <script>
     Polymer({
       is: 'eras-input',
-      properties: {       
+      properties: {
         /** The type of input, passed directly to the input element. */
         type: {
           type: String,
@@ -95,28 +95,36 @@ insed the element implementing `IronFormElementBehavior`... fun times!
          * Use this to only allow users to enter certain characters.
          * @type {String} regex style pattern to specify allowed characters (e.g. [0-9] or [a-zA-Z])
          */
-         allowedPattern: String,
+        allowedPattern: String,
 
-         /** Computed value that states whether invalid input should be prevented. */
-         _preventInvalidInput: {
-           type: Boolean,
-           computed: '_computePreventInvalidInput(allowedPattern)'
-         },                
+        /** Computed value that states whether invalid input should be prevented. */
+        _preventInvalidInput: {
+          type: Boolean,
+          computed: '_computePreventInvalidInput(allowedPattern)'
+        },
       },
 
       behaviors: [
         Polymer.IronFormElementBehavior,
         Polymer.ErasInputBehavior
-      ],                        
+      ],
+
+      /**
+       * Specify which elements validators should append attributes to.
+       * @param {Element} validator
+       */
+      _setValidatorAttributeTargets: function (validator) {
+        validator.attributeTargets.push(this.$.input);
+      },
 
       /**
        * Computes `_preventInvalidInput`
        * @return {Boolean} true if invalid input will be prevented
        */
-      _computePreventInvalidInput: function(allowedPattern) {
-        if(allowedPattern)
+      _computePreventInvalidInput: function (allowedPattern) {
+        if (allowedPattern)
           return true;
-        else 
+        else
           return false;
       }
     });

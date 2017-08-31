@@ -21,9 +21,18 @@
       /**
        * The parent input of this validator, assigned by the inpute
        * when registered.
-       * @type {Element}
+       * @type {Element} `eras-input-behavior`
        */
-      parentInput: Object
+      parentInput: Object,
+
+      /**
+       * An array of element to which attributes should be applied.
+       * @type {Element[]} Usually `iron-input` but potentially something else (e.g. `eras-date`)
+       */
+      attributeTargets: {
+        type: Array,
+        value: [] 
+      }
     },
 
     /**
