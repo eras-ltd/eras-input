@@ -71,11 +71,14 @@
 
     /** 
      * Observes changes to `min` and ensures that a valid value has been provided.
+     * If an invalid value has been provided it sticks with the previous value.
      * Also updates the min attribute of specified elements.
      */
-    _minChanged: function (min) {
-      if (!min.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/))
+    _minChanged: function (min, prev) {
+      if (!min.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/)) {
         console.warn('`min` must be of `YYYY-MM-DD hh:mm A` format; this is invalid: ' + min);
+        this.min = prev;
+      }
 
       for (var i = 0; i < this._attributeTargets.length; i++)
         this._attributeTargets[i].setAttribute('min', this.min);

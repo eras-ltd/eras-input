@@ -71,11 +71,14 @@
 
     /** 
      * Observes changes to `min` and ensures that a valid value has been provided.
+     * If an invalid value has been provided it sticks with the previous value.
      * Also updates the min attribute of specified elements.
      */
-    _maxChanged: function (max) {
-      if (!max.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/))
+    _maxChanged: function (max, prev) {
+      if (!max.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/)) {
         console.warn('`max` must be of `YYYY-MM-DD hh:mm A` format; this is invalid: ' + max);
+        this.max = prev;
+      }
 
       for (var i = 0; i < this._attributeTargets.length; i++)
         this._attributeTargets[i].setAttribute('max', this.v);
