@@ -46,25 +46,33 @@
         height: 24px;
         width: 28px;
       }
+
+      #input {
+        cursor: pointer;
+      }
+
+       :host[invalid] #container paper-icon-button {
+        color: var(--error-color);
+      }
     </style>
 
     <paper-dialog id='picker' entry-animation='scale-up-animation' exit-animation='fade-out-animation' with-backdrop>
       <eras-date id='date' value='{{_date}}'></eras-date>
       <eras-time id='time' value='{{_time}}'></eras-time>
       <div class='buttons layout horizontal center'>
-        <paper-icon-button icon='today' on-tap='_today'></paper-icon-button>
+        <paper-icon-button id='today' icon='today' on-tap='_today'></paper-icon-button>
         <div class='flex'></div>
-        <paper-icon-button icon='close' on-tap='_close'></paper-icon-button>
-        <paper-icon-button icon='check' on-tap='_ok'></paper-icon-button>
+        <paper-icon-button id='cancel' icon='close' on-tap='_close'></paper-icon-button>
+        <paper-icon-button id='ok' icon='check' on-tap='_ok'></paper-icon-button>
       </div>
     </paper-dialog>
 
-    <paper-input-container id="container" invalid$="{{invalid}}" disabled$="{{disabled}}">
-      <paper-icon-button icon="today" prefix on-tap="_open"></paper-icon-button>
-      <template is="dom-if" if="{{label}}">
+    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}'>
+      <paper-icon-button id='icon' icon='today' prefix on-tap='_open'></paper-icon-button>
+      <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>
       </template>
-      <input id="input" is="iron-input" bind-value="{{_display}}" readonly on-tap="_open">
+      <input id='input' is='iron-input' bind-value='{{_display}}' readonly on-tap='_open'>
       <paper-input-error>{{errorMessage}}</paper-input-error>
     </paper-input-container>
 
@@ -116,8 +124,8 @@
        * @param {Element} validator
        */
       _setValidatorAttributeTargets: function (validator) {
-        validator.attributeTargets.push(this.$.date);
-        validator.attributeTargets.push(this.$.input);
+        validator._attributeTargets.push(this.$.date);
+        validator._attributeTargets.push(this.$.input);
       },
 
       /**
@@ -162,7 +170,7 @@
       },
 
       /** Closes the datetime picker */
-      _close: function () {        
+      _close: function () {
         this.$.picker.close();
         this.validate();
       },

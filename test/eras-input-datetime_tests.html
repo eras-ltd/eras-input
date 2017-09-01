@@ -11,13 +11,19 @@
   <script src='../../web-component-tester/browser.js'></script>
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <script src='../bower_components/moment/moment.js'></script>
+  <link rel='import' href='../validators/eras-input-datetime-max-validator.html'>
+  <link rel='import' href='../validators/eras-input-datetime-min-validator.html'>
   <link rel='import' href='../eras-input-datetime.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-datetime-fixture'>
     <template>
-      <eras-input-datetime></eras-input-datetime>
+      <eras-input-datetime>
+        <eras-input-datetime-max-validator id='min' max='2017-12-31 11:30 AM'></eras-input-datetime-max-validator>
+        <eras-input-datetime-min-validator id='max' min='2017-01-01 11:30 AM'></eras-input-datetime-min-validator>
+      </eras-input-datetime>
     </template>
   </test-fixture>
 
@@ -28,12 +34,149 @@
       setup(function () {
         el = fixture('eras-input-datetime-fixture');
       });
-      
-      test('instantiation', function () {
-        assert.equal(el.is, 'eras-input-datetime');
+
+      suite('setup', function () {
+        test('instantiation', function () {
+          assert.equal(el.is, 'eras-input-datetime');
+        });
+
+        test('attributes', function (done) {
+          assert.equal('2017-12-31 11:30 AM', el.$.date.max, 'expected `max` to have been copied from the validator to `eras-date`');
+          assert.equal('2017-01-01 11:30 AM', el.$.date.min, 'expected `min` to have been copied from the validator to `eras-date`');
+          done();
+        });
+      });
+
+      suite('validation', function () {
+        var spy;
+
+        setup(function () {
+          spy = sinon.spy(el, 'validate');
+        });
+
+        teardown(function () {
+          el.validate.restore();
+        });
+
+        test('doesn\'t validate on blur', function (done) {
+          MockInteractions.blur(el.$.input);
+          assert(spy.notCalled, 'did not expect `validate()` to have been called');
+          done();
+        });
+
+        test('validates on close', function (done) {
+          el._close();
+          assert(spy.calledOnce, 'expected `validate()` to be called when calling `_close()`');
+          done();
+        });
+
+        var dataTest = function (date, expected) {
+          return function (done) {
+            el.value = date;
+            el.validate();
+            assert.equal(expected, el.invalid, 'expected input to be ' + (expected ? 'invalid' : 'valid'));
+            done();
+          };
+        };
+
+        var data = [
+          { name: 'valid', date: '2017-06-15 11:30 AM', expected: false },
+          { name: 'invalid - early', date: '2016-06-15 11:30 AM', expected: true },
+          { name: 'invalid - late', date: '2018-06-15 11:30 AM', expected: true },
+        ];
+
+        for (var i = 0; i < data.length; i++)
+          test(data[i].name, dataTest(data[i].date, data[i].expected));
+      });
+
+      suite('interactions', function () {
+        var open;
+
+        setup(function () {
+          var min = moment.utc().subtract(1, 'month').format('YYYY-MM-DD hh:mm A');
+          var max = moment.utc().add(1, 'month').format('YYYY-MM-DD hh:mm A');
+
+          document.querySelector('#min').min = min;
+          document.querySelector('#max').max = max;
+          el.$.date.min = min;
+          el.$.date.max = max;
+
+          open = sinon.spy(el, '_open');
+        });
+
+        teardown(function () {
+          open.restore();
+        });
+
+        test('open on input tap', function (done) {
+          MockInteractions.tap(el.$.input);
+          assert(open.calledOnce, 'expected `_open()` to have been called once');
+          assert(el.$.picker.opened, 'expected `#picker` dialog to be open');
+          done();
+        });
+
+        test('open on icon tap', function (done) {
+          MockInteractions.tap(el.$.icon);
+          assert(open.calledOnce, 'expected `_open()` to have been called once');
+          assert(el.$.picker.opened, 'expected `#picker` dialog to be open');
+          done();
+        });
+
+        test('close on ok', function(done){
+          el._open();
+          assert(el.$.picker.opened, 'expected `#picker` dialog to be open');
+          MockInteractions.tap(el.$.ok);
+          assert(!el.$.picker.opened, 'expected `#picker` dialog to be closed');
+          done();
+        });
+
+        test('close on cancel', function(done){
+          el._open();
+          assert(el.$.picker.opened, 'expected `#picker` dialog to be open');
+          MockInteractions.tap(el.$.cancel);
+          assert(!el.$.picker.opened, 'expected `#picker` dialog to be closed');
+          done();
+        });
+
+        test('value not updated on cancel', function(done){
+          // set the value to tomorrow so we can verify today **hasn't** been selected
+          var tomorrow = moment.utc().add(1, 'day').format('YYYY-MM-DD hh:mm A');
+          el.value = tomorrow;
+
+          MockInteractions.tap(el.$.ok);
+
+          // find the cell for today and tap it
+          var cal = el.$.date.$.calendar;
+          var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
+          var cell = page.querySelector('.cell[today]');
+          MockInteractions.tap(cell);
+
+          MockInteractions.tap(el.$.cancel);
+
+          assert.equal(tomorrow, el.value, 'did not expect the value to change');
+          done();
+        });
+
+        test('select current date', function (done) {
+          // set the value to tomorrow so we can verify today **has** been selected
+          el.value = moment.utc().add(1, 'day').format('YYYY-MM-DD hh:mm A');
+
+          MockInteractions.tap(el.$.ok);
+
+          // find the cell for today and tap it
+          var cal = el.$.date.$.calendar;
+          var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
+          var cell = page.querySelector('.cell[today]');
+          MockInteractions.tap(cell);
+
+          MockInteractions.tap(el.$.ok);
+
+          var expected = moment.utc().format('YYYY-MM-DD hh:mm A');
+          assert.equal(expected, el.value, 'expected the value to have been set to now');
+          done();
+        });
       });
     });
-
   </script>
 </body>
 
