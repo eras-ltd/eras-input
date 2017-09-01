@@ -112,10 +112,12 @@ Property|Description|Default
         Polymer.IronFormElementBehavior,
         Polymer.ErasInputBehavior
       ],
-      ready: function () {
-        // this is to prevent the validation firing on blur as is standard for `Polymer.ErasInputBehavior`
-        this._onBlur = function () { };
-      },
+
+      /**
+       * Updates `value` to match the underlying `paper-checkbox.checked` 
+       * property, then calls `this.validate()`.
+       * @param {Event} e `paper-checkbox.change` event
+       */
       _onChange: function (e) {
         this.value = e.target.checked;
         this.validate();

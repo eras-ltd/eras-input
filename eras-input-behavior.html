@@ -81,7 +81,7 @@
       validators: {
         type: Array,
         value: []
-      },
+      }
     },
 
     listeners: {
@@ -97,9 +97,6 @@
 
       if (this.value !== undefined && this.value.length > 0)
         this.autoValidate = true;
-
-      var parent = this;
-      this.$.input.addEventListener('blur', function () { parent._onBlur() });
     },
 
     /**
@@ -122,7 +119,7 @@
      * @param {Element} validator
      */
     _setValidatorAttributeTargets: function (validator) {
-      
+
     },
 
     /**
