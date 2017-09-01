@@ -31,8 +31,8 @@ If a value is required then you must also supply an
     attached: function () {
       this.parentInput.showCharCounter = true;
 
-      for (var i = 0; i < this.attributeTargets.length; i++)
-        this.attributeTargets[i].setAttribute('maxlength', this.maxlength);
+      for (var i = 0; i < this._attributeTargets.length; i++)
+        this._attributeTargets[i].setAttribute('maxlength', this.maxlength);
     },
 
     /**
@@ -41,8 +41,8 @@ If a value is required then you must also supply an
      * @param Number maxlength
      */
     _maxlengthChanged: function (maxlength) {
-      for (var i = 0; i < this.attributeTargets.length; i++)
-        this.attributeTargets[i].setAttribute('maxlength', maxlength);
+      for (var i = 0; i < this._attributeTargets.length; i++)
+        this._attributeTargets[i].setAttribute('maxlength', maxlength);
     },
 
     /**

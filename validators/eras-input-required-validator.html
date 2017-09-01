@@ -14,8 +14,8 @@
 
     /** Sets the `required` attribute on the parents input */
     attached: function() {
-      for (var i = 0; i < this.attributeTargets.length; i++)
-        this.attributeTargets[i].setAttribute('required', '');
+      for (var i = 0; i < this._attributeTargets.length; i++)
+        this._attributeTargets[i].setAttribute('required', '');
     },
 
     /**
