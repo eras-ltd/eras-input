@@ -1,0 +1,30 @@
+<link rel='import' href='../../../polymer/polymer.html'>
+<link rel='import' href='../../validators/eras-input-validator-behavior.html'>
+<!-- 
+`simple-validator`
+ -->
+<script>
+  Polymer({
+    is: 'simple-validator',
+    properties: {
+      val1: {
+        type: String,
+        value: 'val1'
+      },
+      val2: {
+        type: String,
+        value: 'val2'
+      },
+    },
+    behaviors: [
+      Polymer.ErasInputValidatorBehavior
+    ],
+    observers: [
+      '_valChanged(val1, val2)'
+    ],
+    _valChanged: function(val1, val2) {
+      this.validatorAttributes = [ { name:'attr1', value:val1 }, { name:'attr2', value:val2 } ];
+    }
+  });
+
+</script>

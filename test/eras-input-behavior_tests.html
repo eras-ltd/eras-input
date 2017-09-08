@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'>
+
+  <title>eras-input-behavior test</title>
+
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <script src='../../web-component-tester/browser.js'></script>
+
+  <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <link rel='import' href='elements/simple-input.html'>
+  <link rel='import' href='elements/simple-validator.html'>
+  <link rel='import' href='elements/another-validator.html'>
+</head>
+
+<body>
+  <test-fixture id='single-input-fixture'>
+    <template>
+      <simple-input>
+        <simple-validator></simple-validator>
+      </simple-input>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('single input', function () {
+      var input;
+      var validator;
+
+      setup(function () {
+        input = fixture('single-input-fixture');
+        validator = input.querySelector('simple-validator');
+      });
+
+      teardown(function () {
+      });
+
+      test('instantiation', function () {
+        assert.equal(input.is, 'simple-input');
+        assert.equal(validator.is, 'simple-validator');
+      });
+
+      test('validator registration', function (done) {
+        assert.equal(input, validator.parentInput, 'expected `validator.parentInput` to have been set');
+        assert.equal(1, input.validators.length, 'expected 1 validator to have been added to `input.validators`');
+        assert.equal(validator, input.validators[0], 'expected `input.validators[0]` to be `validator`');
+        done();
+      });
+
+      suite('attributes', function () {
+        setup(function () { });
+        teardown(function () { });
+
+        test('input._attributeTargets', function (done) {
+          assert.equal(2, input._attributeTargets.length, 'expected to find 2 `input._attributeTargets`');
+          assert.equal('target-1', input._attributeTargets[0]);
+          assert.equal('target-2', input._attributeTargets[1]);
+          done();
+        });
+
+        test('validator.validatorAttributes', function (done) {
+          assert.equal(2, validator.validatorAttributes.length, 'expected to find 2 `validator.validatorAttributes`');
+          assert.equal(JSON.stringify({ 'name': 'attr1', 'value': 'val1' }), JSON.stringify(validator.validatorAttributes[0]));
+          assert.equal(JSON.stringify({ 'name': 'attr2', 'value': 'val2' }), JSON.stringify(validator.validatorAttributes[1]));
+          done();
+        });
+
+        test('attributes copied', function (done) {
+          for (var t = 1; t <= 2; t++) {
+            var target = input.querySelector('#target-' + t);
+            for (var a = 1; a <= 2; a++) {
+              assert(target.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert.equal('val' + a, target.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+            }
+          }
+          done();
+        });
+
+        test('attributes changed', function (done) {
+          validator.val1 = 'xxx1';
+          validator.val2 = 'xxx2';
+
+          for (var t = 1; t <= 2; t++) {
+            var target = input.querySelector('#target-' + t);
+            for (var a = 1; a <= 2; a++) {
+              assert(target.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert.equal('xxx' + a, target.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+            }
+          }
+          done();
+        });
+      });
+    });
+  </script>
+
+  <test-fixture id='multiple-input-fixture'>
+    <template>
+      <simple-input>
+        <simple-validator></simple-validator>
+      </simple-input>
+      <simple-input>
+        <simple-validator></simple-validator>
+      </simple-input>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('multiple inputs', function () {
+      var input1;
+      var input2;
+      var validator1;
+      var validator2;
+
+      setup(function () {
+        var inputs = fixture('multiple-input-fixture');
+        input1 = inputs[0];
+        input2 = inputs[1];
+        validator1 = input1.querySelector('simple-validator');
+        validator2 = input2.querySelector('simple-validator');
+      });
+
+      teardown(function () {
+      });
+
+      test('instantiation', function () {
+        assert.equal(input1.is, 'simple-input');
+        assert.equal(input2.is, 'simple-input');
+        assert.equal(validator1.is, 'simple-validator');
+        assert.equal(validator2.is, 'simple-validator');
+      });
+
+      test('validator registration', function (done) {
+        assert.equal(input1, validator1.parentInput, 'expected `validator1.parentInput` to have been set');
+        assert.equal(1, input1.validators.length, 'expected 1 validator to have been added to `input1.validators`');
+        assert.equal(validator1, input1.validators[0], 'expected `input1.validators[0]` to be `validator`');
+        done();
+      });
+
+      suite('attributes', function () {
+        setup(function () { });
+        teardown(function () { });
+
+        test('input._attributeTargets', function (done) {
+          assert.equal(2, input1._attributeTargets.length, 'expected to find 2 `input1._attributeTargets`');
+          assert.equal('target-1', input1._attributeTargets[0]);
+          assert.equal('target-2', input1._attributeTargets[1]);
+
+          assert.equal(2, input2._attributeTargets.length, 'expected to find 2 `input2._attributeTargets`');
+          assert.equal('target-1', input2._attributeTargets[0]);
+          assert.equal('target-2', input2._attributeTargets[1]);
+          done();
+        });
+
+        test('validator.validatorAttributes', function (done) {
+          assert.equal(2, validator1.validatorAttributes.length, 'expected to find 2 `validator1.validatorAttributes`');
+          assert.equal(JSON.stringify({ 'name': 'attr1', 'value': 'val1' }), JSON.stringify(validator1.validatorAttributes[0]));
+          assert.equal(JSON.stringify({ 'name': 'attr2', 'value': 'val2' }), JSON.stringify(validator1.validatorAttributes[1]));
+
+          assert.equal(2, validator2.validatorAttributes.length, 'expected to find 2 `validator2.validatorAttributes`');
+          assert.equal(JSON.stringify({ 'name': 'attr1', 'value': 'val1' }), JSON.stringify(validator2.validatorAttributes[0]));
+          assert.equal(JSON.stringify({ 'name': 'attr2', 'value': 'val2' }), JSON.stringify(validator2.validatorAttributes[1]));
+          done();
+        });
+
+        test('attributes copied', function (done) {
+          for (var t = 1; t <= 2; t++) {
+            var target1 = input1.querySelector('#target-' + t);
+            var target2 = input2.querySelector('#target-' + t);
+            for (var a = 1; a <= 2; a++) {
+              assert(target1.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert(target2.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert.equal('val' + a, target1.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+              assert.equal('val' + a, target2.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+            }
+          }
+          done();
+        });
+
+        test('attributes changed', function (done) {
+          validator1.val1 = 'xxx1';
+          validator1.val2 = 'xxx2';
+
+          for (var t = 1; t <= 2; t++) {
+            var target = input1.querySelector('#target-' + t);
+            for (var a = 1; a <= 2; a++) {
+              assert(target.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert.equal('xxx' + a, target.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+            }
+          }
+
+          for (var t = 1; t <= 2; t++) {
+            var target = input2.querySelector('#target-' + t);
+            for (var a = 1; a <= 2; a++) {
+              assert(target.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert.equal('val' + a, target.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+            }
+          }
+          done();
+        });
+      });
+    });
+  </script>
+
+  <test-fixture id='multiple-validators-fixture'>
+    <template>
+      <simple-input>
+        <simple-validator></simple-validator>
+        <another-validator></another-validator>
+      </simple-input>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('multiple validators', function () {
+      var input;
+      var validator1;
+      var validator2;
+
+      setup(function () {
+        input = fixture('multiple-validators-fixture');
+        validator1 = input.querySelector('simple-validator');
+        validator2 = input.querySelector('another-validator');
+      });
+
+      teardown(function () {
+      });
+
+      test('instantiation', function () {
+        assert.equal(input.is, 'simple-input');
+        assert.equal(validator1.is, 'simple-validator');
+        assert.equal(validator2.is, 'another-validator');
+      });
+
+      test('validator registration', function (done) {
+        assert.equal(input, validator1.parentInput, 'expected `validator1.parentInput` to have been set');
+        assert.equal(input, validator2.parentInput, 'expected `validator2.parentInput` to have been set');
+        assert.equal(2, input.validators.length, 'expected 1 validator to have been added to `input.validators`');
+        assert.equal(validator1, input.validators[0], 'expected `input.validators[0]` to be `validator1`');
+        assert.equal(validator2, input.validators[1], 'expected `input.validators[1]` to be `validator2`');
+        done();
+      });
+
+      suite('attributes', function () {
+        setup(function () { });
+        teardown(function () { });
+
+        test('input._attributeTargets', function (done) {
+          assert.equal(2, input._attributeTargets.length, 'expected to find 2 `input._attributeTargets`');
+          assert.equal('target-1', input._attributeTargets[0]);
+          assert.equal('target-2', input._attributeTargets[1]);
+          done();
+        });
+
+        test('validator.validatorAttributes', function (done) {
+          assert.equal(2, validator1.validatorAttributes.length, 'expected to find 2 `validator.validatorAttributes`');
+          assert.equal(JSON.stringify({ 'name': 'attr1', 'value': 'val1' }), JSON.stringify(validator1.validatorAttributes[0]));
+          assert.equal(JSON.stringify({ 'name': 'attr2', 'value': 'val2' }), JSON.stringify(validator1.validatorAttributes[1]));
+          
+          assert.equal(1, validator2.validatorAttributes.length, 'expected to find 1 `validator.validatorAttributes`');
+          assert.deepEqual({ 'name': 'attr3', 'value': 'val3' }, validator2.validatorAttributes[0]);          
+          done();
+        });
+
+        test('attributes copied', function (done) {
+          for (var t = 1; t <= 2; t++) {
+            var target = input.querySelector('#target-' + t);
+            for (var a = 1; a <= 3; a++) {
+              assert(target.hasAttribute('attr' + a), 'expected `attr' + a + '` to have been copied to `#target-' + t + '`');
+              assert.equal('val' + a, target.getAttribute('attr' + a), 'expected `attr' + a + '` to have been set to `val' + a + '`');
+            }
+          }
+          done();
+        });        
+      });
+    });
+  </script>
+</body>
+
+</html>

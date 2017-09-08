@@ -80,46 +80,59 @@
        */
       validators: {
         type: Array,
-        value: []
-      }
+        value: function () { return []; }
+      },
+
+      /**
+       * Array of ids used to find the elements to which to copy attributes
+       * from the validators. Override this when implementing.
+       * @type {String[]}
+       */
+      _attributeTargets: {
+        type: Array,
+        value: function() { return []; }
+      },
     },
 
     listeners: {
-      'eras-input-validator-registered': '_registerValidator'
+      'eras-input-validator-ready': '_registerValidator',
+      'eras-input-validator-attributes-changed': '_copyAttributes'
     },
 
     ready: function () {
-      // when testing it appears that the test fixture is not sufficient to ensure 
-      // this array only contains the validators for this input. 
-      // for some reason when each new fixture is created this carries over the values
-      // from the previous fixure and you end up with a really long list of validators
-      this.validators = [];
-
       if (this.value !== undefined && this.value.length > 0)
         this.autoValidate = true;
     },
 
     /**
-     * Listens for the `eras-input-validator-registered` event fired
-     * by the validators and:
-     * - set `validator.parentInput` to `this`
-     * - add the validator to `validators` array
-     * - copy attributes to the input from the validator
-     * @param {Event} e `eras-input-validator-registered`
+     * Listens for the `eras-input-validator-ready` event fired
+     * by validators implementing `eras-input-validator-behavior`.
+     * - sets `validator.parentInput` to `this`
+     * - adds validator to `this.validators[]`
+     * @param {Event} e `eras-input-validator-behavior`
      */
     _registerValidator: function (e) {
-      e.detail.validator.parentInput = this;
-      this.validators.push(e.detail.validator);
-      this._setValidatorAttributeTargets(e.detail.validator);
+      var validator = e.detail.validator;
+      validator.parentInput = this;
+      this.validators.push(validator);
     },
 
     /**
-     * Implement this function to state which elements the
-     * validators should copy attributes to.
-     * @param {Element} validator
+     * Listens for the `eras-input-validator-attributes-changed` event 
+     * fired by validators implementing `eras-input-validator-behavior`
+     * when they need to update the attributes on the parent input.
+     * Loops through all attribute targets and attributes setting each.
+     * @param {Event} e `eras-input-validator-behavior`
      */
-    _setValidatorAttributeTargets: function (validator) {
-
+    _copyAttributes: function(e) {
+      var validator = e.detail.validator;
+      for (var t = 0; t < this._attributeTargets.length; t++) {
+        var target = this._attributeTargets[t];
+        for (var a = 0; a < validator.validatorAttributes.length; a++) {
+          var attribute = validator.validatorAttributes[a];
+          this.querySelector('#'+target).setAttribute(attribute.name, attribute.value);
+        }
+      }
     },
 
     /**

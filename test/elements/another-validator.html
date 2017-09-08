@@ -1,0 +1,25 @@
+<link rel='import' href='../../../polymer/polymer.html'>
+<link rel='import' href='../../validators/eras-input-validator-behavior.html'>
+<!-- 
+`another-validator`
+ -->
+<script>
+  Polymer({
+    is: 'another-validator',
+    properties: {
+      /**
+       * Array of attributes to copy to parent inputs.
+       * Override this when implementing.
+       * @type {{ name:String, value:Object }[]}
+       */
+       validatorAttributes: {
+        type: Array,
+        value: function () { return [ { name:'attr3', value:'val3' } ]; }
+      },
+    },
+    behaviors: [
+      Polymer.ErasInputValidatorBehavior
+    ]
+  });
+
+</script>

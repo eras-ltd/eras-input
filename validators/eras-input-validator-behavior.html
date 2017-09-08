@@ -26,21 +26,35 @@
       parentInput: Object,
 
       /**
-       * An array of element to which attributes should be applied.
-       * @type {Element[]} Usually `iron-input` but potentially something else (e.g. `eras-date`)
+       * Array of attributes to copy to parent inputs.
+       * Override this when implementing.
+       * @type {{ name:String, value:Object }[]}
        */
-      _attributeTargets: {
+      validatorAttributes: {
         type: Array,
-        value: [] 
-      }
+        value: function () { return []; }
+      },
+    },
+
+    observers: [
+      '_validatorAttributesChanged(validatorAttributes, parentInput)'
+    ],
+
+    ready: function () {
+      this.fire('eras-input-validator-ready', { validator: this });
     },
 
     /**
-     * Fires `eras-input-validator-registered` when attached so 
-     * the parent input can register it.
+     * Observes `this.parentInput` and `this.validatorAttributes` for changes
+     * and fires the `eras-input-validator-attributes-changed`.
+     * @param {{ name:String, value:Object }[]} validatorAttributes
+     * @param {Element} parentInput
      */
-    attached: function () {
-      this.fire('eras-input-validator-registered', { validator: this });
+    _validatorAttributesChanged: function (validatorAttributes, parentInput) {
+      if(!parentInput)
+        return;
+
+      this.fire('eras-input-validator-attributes-changed', { validator: this });
     },
 
     /**
@@ -52,9 +66,16 @@
     },
 
     /**
-     * Fired when the element is attached so that it can be registered with the
+     * Fired when the element is ready so that it can be registered with the
      * parent input.
-     * @event eras-input-validator-registered
+     * @event eras-input-validator-ready
+     * @param {{validator:Element}} detail
+     */
+
+     /**
+     * Fired when the attributes on the parent input need updating in response
+     * to changes to this validator.
+     * @event eras-input-validator-attributes-changed
      * @param {{validator:Element}} detail
      */
   }
