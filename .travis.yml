@@ -10,4 +10,4 @@ before_script:
 - bower install
 - polylint
 script:
-- xvfb-run wct --skip-plugin sauce
+- xvfb-run wct
