@@ -95,7 +95,7 @@
     },
 
     listeners: {
-      'eras-input-validator-ready': '_registerValidator',
+      'eras-input-validator-attached': '_registerValidator',
       'eras-input-validator-attributes-changed': '_copyAttributes'
     },
 
@@ -105,7 +105,7 @@
     },
 
     /**
-     * Listens for the `eras-input-validator-ready` event fired
+     * Listens for the `eras-input-validator-attached` event fired
      * by validators implementing `eras-input-validator-behavior`.
      * - sets `validator.parentInput` to `this`
      * - adds validator to `this.validators[]`
@@ -126,7 +126,7 @@
      */
     _copyAttributes: function(e) {
       var validator = e.detail.validator;
-      for (var t = 0; t < this._attributeTargets.length; t++) {
+      for (var t = 0; t < this._attributeTargets.length; t++) {        
         var target = this._attributeTargets[t];
         for (var a = 0; a < validator.validatorAttributes.length; a++) {
           var attribute = validator.validatorAttributes[a];

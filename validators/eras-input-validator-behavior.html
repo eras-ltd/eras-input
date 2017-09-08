@@ -40,8 +40,8 @@
       '_validatorAttributesChanged(validatorAttributes, parentInput)'
     ],
 
-    ready: function () {
-      this.fire('eras-input-validator-ready', { validator: this });
+    attached: function () {
+      this.fire('eras-input-validator-attached', { validator: this });
     },
 
     /**
@@ -51,9 +51,9 @@
      * @param {Element} parentInput
      */
     _validatorAttributesChanged: function (validatorAttributes, parentInput) {
-      if(!parentInput)
+      if (!parentInput)
         return;
-
+        
       this.fire('eras-input-validator-attributes-changed', { validator: this });
     },
 
@@ -72,12 +72,12 @@
      * @param {{validator:Element}} detail
      */
 
-     /**
-     * Fired when the attributes on the parent input need updating in response
-     * to changes to this validator.
-     * @event eras-input-validator-attributes-changed
-     * @param {{validator:Element}} detail
-     */
+    /**
+    * Fired when the attributes on the parent input need updating in response
+    * to changes to this validator.
+    * @event eras-input-validator-attributes-changed
+    * @param {{validator:Element}} detail
+    */
   }
 
 </script>
