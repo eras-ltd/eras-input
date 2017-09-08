@@ -22,9 +22,6 @@
      */
     attached: function () {
       this.parentInput.showCharCounter = true;
-
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('minlength', this.minlength);
     },
 
     /**
@@ -33,8 +30,7 @@
      * @param Number minlength
      */
      _maxlengthChanged: function (minlength) {
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('minlength', minlength);
+      this.validatorAttributes = [ { name:'minlength', value:this.minlength } ];
     },
 
     /**

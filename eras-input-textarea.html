@@ -18,9 +18,9 @@
       }
     </style>
 
-    <paper-input-container 
-      id='container' 
-      invalid$='{{invalid}}' 
+    <paper-input-container
+      id='container'
+      invalid$='{{invalid}}'
       disabled$='{{disabled}}'>
 
       <content id='addons' select='.addon'></content>
@@ -29,13 +29,13 @@
         <label>{{label}}</label>
       </template>
 
-      <iron-autogrow-textarea 
-        id='input' 
-        class='paper-input-input' 
-        name='{{name}}' 
-        bind-value='{{value}}' 
+      <iron-autogrow-textarea
+        id='input'
+        class='paper-input-input'
+        name='{{name}}'
+        bind-value='{{value}}'
         readonly$='{{readonly}}'
-        rows$='{{rows}}' 
+        rows$='{{rows}}'
         max-rows$='{{maxRows}}'>
       </iron-autogrow-textarea>
 
@@ -55,15 +55,15 @@
       is: 'eras-input-textarea',
       properties: {
         /**
-         * **NOT IMPLEMENTED** 
+         * **NOT IMPLEMENTED**
          *
          * Icons will not be displayed for textareas because
-         * they are vertically aligned in the middle and look 
+         * they are vertically aligned in the middle and look
          * daft!
          */
         icon: String,
 
-        /** 
+        /**
          * Set to true to display the char counter.
          * Overrides default value from `Polymer.ErasInputBehavior`
          */
@@ -85,7 +85,17 @@
         maxRows: {
           type: Number,
           value: 0
-        }
+        },
+
+        /**
+         * Array of ids used to find the elements to which to copy attributes
+         * from the validators.
+         * @type {String[]}
+         */
+        _attributeTargets: {
+          type: Array,
+          value: function () { return ['input']; }
+        },
       },
 
       behaviors: [
@@ -93,17 +103,9 @@
         Polymer.ErasInputBehavior
       ],
 
-      ready: function() {
+      ready: function () {
         var self = this;
         this.$.input.addEventListener('blur', function () { self._onBlur(); });
-      },
-
-      /**
-       * Specify which elements validators should append attributes to.
-       * @param {Element} validator
-       */
-      _setValidatorAttributeTargets: function (validator) {
-        validator._attributeTargets.push(this.$.input);
       },
     });
   </script>

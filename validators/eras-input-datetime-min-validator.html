@@ -41,12 +41,6 @@
       Polymer.ErasInputValidatorBehavior
     ],
 
-    /** Sets the `min` attribute of the specified elements */
-    attached: function () {
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('min', this.min);
-    },
-
     /**
      * Validates the provided input against `min`
      * @param String value
@@ -82,8 +76,7 @@
           this.min = prev;
       }
 
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('min', this.min);
+      this.validatorAttributes = [ { name:'min', value:this.min } ];
     },
 
     /** If `future` is true then set `min` to the current datetime. */

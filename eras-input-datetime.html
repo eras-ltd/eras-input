@@ -119,22 +119,23 @@
         _time: {
           type: String,
           computed: '_computeTime(_local)'
-        }
+        },
+
+        /**
+         * Array of ids used to find the elements to which to copy attributes
+         * from the validators.
+         * @type {String[]}
+         */
+        _attributeTargets: {
+          type: Array,
+          value: function () { return [ 'input', 'date' ]; }
+        },
       },
 
       behaviors: [
         Polymer.IronFormElementBehavior,
         Polymer.ErasInputBehavior
       ],
-
-      /**
-       * Specify which elements validators should append attributes to.
-       * @param {Element} validator
-       */
-      _setValidatorAttributeTargets: function (validator) {
-        validator._attributeTargets.push(this.$.date);
-        validator._attributeTargets.push(this.$.input);
-      },
 
       /**
        * Computes the **local** datetime from `value` which is **UTC**

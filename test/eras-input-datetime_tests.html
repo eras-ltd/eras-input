@@ -122,7 +122,7 @@
           done();
         });
 
-        test('close on ok', function(done){
+        test('close on ok', function (done) {
           el._open();
           assert(el.$.picker.opened, 'expected `#picker` dialog to be open');
           MockInteractions.tap(el.$.ok);
@@ -130,7 +130,7 @@
           done();
         });
 
-        test('close on cancel', function(done){
+        test('close on cancel', function (done) {
           el._open();
           assert(el.$.picker.opened, 'expected `#picker` dialog to be open');
           MockInteractions.tap(el.$.cancel);
@@ -138,42 +138,46 @@
           done();
         });
 
-        test('value not updated on cancel', function(done){
+        test('value not updated on cancel', function (done) {
           // set the value to tomorrow so we can verify today **hasn't** been selected
           var tomorrow = moment.utc().add(1, 'day').format('YYYY-MM-DD hh:mm A');
           el.value = tomorrow;
 
-          MockInteractions.tap(el.$.ok);
+          flush(function () {
+            el._open();
 
-          // find the cell for today and tap it
-          var cal = el.$.date.$.calendar;
-          var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
-          var cell = page.querySelector('.cell[today]');
-          MockInteractions.tap(cell);
+            // find the cell for today and tap it
+            var cal = el.$.date.$.calendar;
+            var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
+            var cell = page.querySelector('.cell[today]');
+            MockInteractions.tap(cell);
 
-          MockInteractions.tap(el.$.cancel);
+            MockInteractions.tap(el.$.cancel);
 
-          assert.equal(tomorrow, el.value, 'did not expect the value to change');
-          done();
+            assert.equal(tomorrow, el.value, 'did not expect the value to change');
+            done();
+          });
         });
 
         test('select current date', function (done) {
           // set the value to tomorrow so we can verify today **has** been selected
           el.value = moment.utc().add(1, 'day').format('YYYY-MM-DD hh:mm A');
 
-          MockInteractions.tap(el.$.ok);
+          flush(function () {
+            el._open();
 
-          // find the cell for today and tap it
-          var cal = el.$.date.$.calendar;
-          var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
-          var cell = page.querySelector('.cell[today]');
-          MockInteractions.tap(cell);
+            // find the cell for today and tap it
+            var cal = el.$.date.$.calendar;
+            var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
+            var cell = page.querySelector('.cell[today]');
+            MockInteractions.tap(cell);
 
-          MockInteractions.tap(el.$.ok);
+            MockInteractions.tap(el.$.ok);
 
-          var expected = moment.utc().format('YYYY-MM-DD hh:mm A');
-          assert.equal(expected, el.value, 'expected the value to have been set to now');
-          done();
+            var expected = moment.utc().format('YYYY-MM-DD hh:mm A');
+            assert.equal(expected, el.value, 'expected the value to have been set to now');
+            done();
+          });
         });
       });
     });

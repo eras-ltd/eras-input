@@ -102,6 +102,16 @@ insed the element implementing `IronFormElementBehavior`... fun times!
           type: Boolean,
           computed: '_computePreventInvalidInput(allowedPattern)'
         },
+
+        /**
+         * Array of ids used to find the elements to which to copy attributes
+         * from the validators.
+         * @type {String[]}
+         */
+        _attributeTargets: {
+          type: Array,
+          value: function () { return ['input']; }
+        },
       },
 
       behaviors: [
@@ -109,17 +119,9 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         Polymer.ErasInputBehavior
       ],
 
-      ready: function() {
+      ready: function () {
         var self = this;
         this.$.input.addEventListener('blur', function () { self._onBlur(); });
-      },
-
-      /**
-       * Specify which elements validators should append attributes to.
-       * @param {Element} validator
-       */
-      _setValidatorAttributeTargets: function (validator) {
-        validator._attributeTargets.push(this.$.input);
       },
 
       /**

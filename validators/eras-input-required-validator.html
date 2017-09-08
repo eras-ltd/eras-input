@@ -8,15 +8,19 @@
 <script>
   Polymer({
     is: 'eras-input-required-validator',
+    properties: {
+      /**
+       * Array of attributes to copy to parent inputs.
+       * @type {{ name:String, value:Object }[]}
+       */
+      validatorAttributes: {
+        type: Array,
+        value: function () { return [{ name: 'required', value: '' }]; }
+      },
+    },
     behaviors: [
       Polymer.ErasInputValidatorBehavior
     ],
-
-    /** Sets the `required` attribute on the parents input */
-    attached: function() {
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('required', '');
-    },
 
     /**
      * Ensures a value is provided.

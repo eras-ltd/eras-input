@@ -41,12 +41,6 @@
       Polymer.ErasInputValidatorBehavior
     ],
 
-    /** Sets the `max` attribute of the specified elements */
-    attached: function () {
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('max', this.max);
-    },
-
     /**
      * Validates the provided input against `max`
      * @param String value
@@ -82,8 +76,7 @@
           this.max = prev;
       }
 
-      for (var i = 0; i < this._attributeTargets.length; i++)
-        this._attributeTargets[i].setAttribute('max', this.v);
+      this.validatorAttributes = [ { name:'max', value:this.max } ];
     },
 
     /** If `past` is true then set `max` to the current datetime. */
