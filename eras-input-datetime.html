@@ -11,7 +11,8 @@
 <link rel='import' href='../eras-date/eras-date.html'>
 <link rel='import' href='../eras-time/eras-time.html'>
 <link rel='import' href='../eras-external/moment.html'>
-<link rel='import' href='eras-input-icon-styles.html'>
+<link rel='import' href='styles/eras-input-dialog-styles.html'>
+<link rel='import' href='styles/eras-input-icon-styles.html'>
 <link rel='import' href='eras-input-behavior.html'>
 <!--
 `eras-input-datetime`
@@ -19,24 +20,13 @@
 -->
 <dom-module id='eras-input-datetime'>
   <template>
-    <style include='eras-input-icon-styles'>
+    <style include='eras-input-icon-styles eras-input-dialog-styles'>
        :host {
         display: block;
       }
 
-      eras-date,
-      eras-time {
-        padding: 0 !important;
-        margin: 0 !important;
-        border-bottom: 1px solid var(--paper-grey-300);
-      }
-
       eras-time {
         margin: 0 auto;
-      }
-
-      #picker div.buttons {
-        padding: 8px;
       }
 
       #input {
@@ -47,7 +37,7 @@
         color: var(--error-color);
       }
 
-      :host:not([show-time]) eras-time {
+       :host:not([show-time]) eras-time {
         display: none;
       }
     </style>
@@ -122,7 +112,7 @@
          */
         _attributeTargets: {
           type: Array,
-          value: function () { return [ 'input', 'date' ]; }
+          value: function () { return ['input', 'date']; }
         },
       },
 
@@ -148,7 +138,7 @@
       _computeDisplay: function (local) {
         var m = moment(local, 'YYYY-MM-DD hh:mm A');
 
-        if(this.showTime)
+        if (this.showTime)
           return m.format('Do MMM YYYY hh:mm A');
         else
           return m.format('Do MMM YYYY');
