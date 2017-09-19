@@ -11,6 +11,7 @@
 <link rel='import' href='../eras-date/eras-date.html'>
 <link rel='import' href='../eras-time/eras-time.html'>
 <link rel='import' href='../eras-external/moment.html'>
+<link rel='import' href='eras-input-icon-styles.html'>
 <link rel='import' href='eras-input-behavior.html'>
 <!--
 `eras-input-datetime`
@@ -18,7 +19,7 @@
 -->
 <dom-module id='eras-input-datetime'>
   <template>
-    <style>
+    <style include='eras-input-icon-styles'>
        :host {
         display: block;
       }
@@ -36,13 +37,6 @@
 
       #picker div.buttons {
         padding: 8px;
-      }
-
-      #container paper-icon-button[prefix] {
-        padding: 0;
-        padding-right: 4px;
-        height: 24px;
-        width: 28px;
       }
 
       #input {

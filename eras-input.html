@@ -5,6 +5,7 @@
 <link rel='import' href='../paper-input/paper-input-container.html'>
 <link rel='import' href='../paper-input/paper-input-error.html'>
 <link rel='import' href='../paper-input/paper-input-char-counter.html'>
+<link rel='import' href='eras-input-icon-styles.html'>
 <link rel='import' href='eras-input-behavior.html'>
 
 <!--
@@ -23,7 +24,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
 -->
 <dom-module id='eras-input'>
   <template>
-    <style>
+    <style include='eras-input-icon-styles'>
        :host {
         display: block;
         padding-bottom: 10px;
@@ -32,16 +33,9 @@ insed the element implementing `IronFormElementBehavior`... fun times!
        :host([hidden]) {
         display: none !important;
       }
-
-      paper-input-container ::content iron-icon {
-        margin-right: 5px;
-      }
     </style>
 
-    <paper-input-container 
-      id='container' 
-      invalid$='{{invalid}}' 
-      disabled$='{{disabled}}'>
+    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}'>
 
       <template is='dom-if' if='{{icon}}'>
         <iron-icon icon='{{icon}}' prefix></iron-icon>
@@ -60,7 +54,7 @@ insed the element implementing `IronFormElementBehavior`... fun times!
         bind-value='{{value}}' 
         readonly$={{readonly}} 
         type$='{{type}}' 
-        autocomplete$='{{autocomplete}}'
+        autocomplete$='{{autocomplete}}'        
         prevent-invalid-input$='{{_preventInvalidInput}}' 
         allowed-pattern$='{{allowedPattern}}' />
 
