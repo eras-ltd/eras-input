@@ -12,6 +12,7 @@
   <link rel='import' href='../../iron-demo-helpers/demo-pages-shared-styles.html'>
   <link rel='import' href='../../iron-demo-helpers/demo-snippet.html'>
   <link rel='import' href='../eras-input-daterange.html'>
+  <link rel='import' href='../validators/eras-input-required-validator.html'>
 
   <style is='custom-style' include='demo-pages-shared-styles'>
     eras-input-daterange {
@@ -25,7 +26,9 @@
     <h3>Basic eras-input-daterange demo</h3>
     <demo-snippet>
       <template>
-        <eras-input-daterange label='Enter some dates!'></eras-input-daterange>
+        <eras-input-daterange label='Enter some dates!'>
+          <eras-input-required-validator message='You must provide a date range!'></eras-input-required-validator>
+        </eras-input-daterange>
       </template>
     </demo-snippet>
   </div>

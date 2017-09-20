@@ -114,7 +114,7 @@
     _registerValidator: function (e) {
       var validator = e.detail.validator;
       validator.parentInput = this;
-      this.validators.push(validator);
+      this.validators.push(validator);      
     },
 
     /**
@@ -130,7 +130,7 @@
         var target = this._attributeTargets[t];
         for (var a = 0; a < validator.validatorAttributes.length; a++) {
           var attribute = validator.validatorAttributes[a];
-          this.querySelector('#'+target).setAttribute(attribute.name, attribute.value);
+          this.querySelector('#'+target).setAttribute(attribute.name, attribute.value);          
         }
       }
     },

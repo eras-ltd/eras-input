@@ -12,27 +12,55 @@
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
   <link rel='import' href='../eras-input-daterange.html'>
+  <link rel='import' href='../validators/eras-input-required-validator.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-daterange-fixture'>
-    <template>
-      <eras-input-daterange></eras-input-daterange>
+    <template is='dom-template'>
+      <eras-input-daterange from$='{{from}}' to$='{{to}}' min$='{{min}}' max$='{{max}}'>
+        <eras-input-required-validator id='validator'></eras-input-required-validator>
+      </eras-input-daterange>
     </template>
   </test-fixture>
 
   <script>
     suite('eras-input-daterange', function () {
       var el;
+      var validator;
 
       setup(function () {
-        el = fixture('eras-input-daterange-fixture');
+        el = fixture('eras-input-daterange-fixture', {
+          // from: '2010-01-01',
+          // to: '2012-12-31'
+        });
+        validator = el.querySelector('#validator');
       });
-      test('instantiation', function () {
-        assert.equal(el.is, 'eras-input-daterange');
+
+      suite('setup', function () {
+        test('instantiation', function (done) {
+          assert.equal('eras-input-daterange', el.is);
+          assert.equal('eras-input-required-validator', validator.is);
+          done();
+        });
+
+        test('validators', function (done) {
+          flush(function () {
+            assert.equal(1, el.validators.length, 'expected 1 validator not ' + el.validators.length);
+            assert.equal(true, el.$.range.required, 'expected `el.$.range.required` to have been set to `true`');
+            done();
+          });
+        });
+
+        test('defaults', function (done) {
+          flush(function () {
+            assert.notEqual(undefined, el.$.range.from, 'expected `from` to have been given a default value');
+            assert.notEqual(undefined, el.$.range.to, 'expected `to` to have been given a default value');
+            done();
+          });
+        });
       });
     });
-
   </script>
 </body>
 

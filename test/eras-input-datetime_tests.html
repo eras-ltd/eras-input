@@ -14,15 +14,17 @@
   <script src='../bower_components/moment/moment.js'></script>
   <link rel='import' href='../validators/eras-input-datetime-max-validator.html'>
   <link rel='import' href='../validators/eras-input-datetime-min-validator.html'>
+  <link rel='import' href='../validators/eras-input-required-validator.html'>
   <link rel='import' href='../eras-input-datetime.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-datetime-fixture'>
-    <template>
+    <template is='dom-template'>
       <eras-input-datetime>
-        <eras-input-datetime-max-validator id='min' max='2017-12-31 11:30 AM'></eras-input-datetime-max-validator>
-        <eras-input-datetime-min-validator id='max' min='2017-01-01 11:30 AM'></eras-input-datetime-min-validator>
+        <eras-input-required-validator id='req'></eras-input-required-validator>
+        <eras-input-datetime-max-validator id='min' max='{{min}}'></eras-input-datetime-max-validator>
+        <eras-input-datetime-min-validator id='max' min='{{max}}'></eras-input-datetime-min-validator>
       </eras-input-datetime>
     </template>
   </test-fixture>
@@ -32,7 +34,7 @@
       var el;
 
       setup(function () {
-        el = fixture('eras-input-datetime-fixture');
+        el = fixture('eras-input-datetime-fixture', { min: '2017-12-31 11:30 AM', max: '2017-01-01 11:30 AM' });
       });
 
       suite('setup', function () {
@@ -44,6 +46,15 @@
           assert.equal('2017-12-31 11:30 AM', el.$.date.max, 'expected `max` to have been copied from the validator to `eras-date`');
           assert.equal('2017-01-01 11:30 AM', el.$.date.min, 'expected `min` to have been copied from the validator to `eras-date`');
           done();
+        });
+
+        test('defaults', function (done) {
+          el = fixture('eras-input-datetime-fixture', {});
+
+          flush(function () {
+            assert.notEqual(undefined, el.$.date.value, 'expected `value` to have been given a default value');
+            done();
+          });
         });
       });
 

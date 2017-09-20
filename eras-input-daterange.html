@@ -63,6 +63,8 @@
 
       <paper-input-error>{{errorMessage}}</paper-input-error>
     </paper-input-container>
+
+    <content></content>
   </template>
   <script>
     Polymer({
@@ -100,6 +102,16 @@
         _valueSet: {
           type: Boolean,
           value: false
+        },
+
+        /**
+         * Array of ids used to find the elements to which to copy attributes
+         * from the validators.
+         * @type {String[]}
+         */
+        _attributeTargets: {
+          type: Array,
+          value: function () { return ['range', 'from',  'to']; }
         },
       },
 
