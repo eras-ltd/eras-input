@@ -1,22 +1,159 @@
 <link rel='import' href='../polymer/polymer.html'>
+<link rel='import' href='../iron-flex-layout/iron-flex-layout-classes.html'>
+<link rel='import' href='../iron-form-element-behavior/iron-form-element-behavior.html'>
+<link rel='import' href='../iron-icon/iron-icon.html'>
+<link rel='import' href='../iron-input/iron-input.html'>
+<link rel='import' href='../neon-animation/animations/scale-up-animation.html' />
+<link rel='import' href='../neon-animation/animations/fade-out-animation.html' />
+<link rel='import' href='../paper-dialog/paper-dialog.html'>
+<link rel='import' href='../paper-icon-button/paper-icon-button.html'>
+<link rel='import' href='../paper-input/paper-input-container.html'>
+<link rel='import' href='../paper-input/paper-input-error.html'>
+<link rel='import' href='../eras-date/eras-date-range.html'>
+<link rel='import' href='../eras-external/moment.html'>
+<link rel='import' href='styles/eras-input-dialog-styles.html'>
+<link rel='import' href='styles/eras-input-icon-styles.html'>
+<link rel='import' href='eras-input-behavior.html'>
 <!--
 `eras-input-daterange`
 @demo demo/eras-input-daterange_demo.html
 -->
 <dom-module id='eras-input-daterange'>
   <template>
-    <style>
+    <style include='iron-flex iron-flex-alignment eras-input-icon-styles eras-input-dialog-styles'>
        :host {
         display: block;
       }
+
+      #inputs>input {
+        width: 130px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      #inputs>iron-icon {
+        width: 20px;
+      }
     </style>
 
+    <paper-dialog id='picker' entry-animation='scale-up-animation' exit-animation='fade-out-animation' with-backdrop>
+      <eras-date-range id='range' from='{{from}}' to='{{to}}'></eras-date-range>
+      <div class='buttons layout horizontal-reverse center'>
+        <paper-icon-button id='cancel' icon='close' on-tap='_close'></paper-icon-button>
+        <paper-icon-button id='ok' icon='check' on-tap='_ok'></paper-icon-button>
+      </div>
+    </paper-dialog>
+
+    <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_valueSet}}'>
+      <paper-icon-button id='icon' icon='date-range' prefix on-tap='_open'></paper-icon-button>
+
+      <template is='dom-if' if='{{label}}'>
+        <label>{{label}}</label>
+      </template>
+
+      <div id='inputs' class='layout horizontal center'>
+        <input id='from' is='iron-input' bind-value='{{_fromDisplay}}' readonly on-tap='_open'>
+
+        <template is='dom-if' if='{{_valueSet}}'>
+          <iron-icon icon='arrow-forward'></iron-icon>
+        </template>
+
+        <input id='to' is='iron-input' bind-value='{{_toDisplay}}' readonly on-tap='_open'>
+      </div>
+
+      <paper-input-error>{{errorMessage}}</paper-input-error>
+    </paper-input-container>
   </template>
   <script>
     Polymer({
       is: 'eras-input-daterange',
       properties: {
+        /** The start of the date range `YYYY-MM-DD` */
+        from: String,
 
+        /**
+         * Computed from `from` formated for display
+         * @type {String} `Do MMM YYYY` format date
+         */
+        _fromDisplay: {
+          type: String,
+          computed: '_computeDisplay(from)'
+        },
+
+        /** The end of the date range `YYYY-MM-DD` */
+        to: String,
+
+        /**
+         * Computed from `to` formated for display
+         * @type {String} `Do MMM YYYY` format date
+         */
+        _toDisplay: {
+          type: String,
+          computed: '_computeDisplay(to)'
+        },
+
+        /**
+         * Whether `from` **or** `to` have a value. Used to float
+         * the label when any value is set.
+         * Updated by `_updateValueSet` when `from` or `to` are changed.
+         */
+        _valueSet: {
+          type: Boolean,
+          value: false
+        },
+      },
+
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.ErasInputBehavior
+      ],
+
+      observers: [
+        '_updateValueSet(from, to)',
+        '_updateValueSet(from, \'\')',
+        '_updateValueSet(\'\', to)',
+      ],
+
+      /**
+       * Updates `_valueSet` in response to changes to
+       * `from` or `to`. 
+       * @param {String} from
+       * @param {String} to
+       */
+      _updateValueSet: function (from, to) {
+        if (from || to)
+          this._valueSet = true;
+        else
+          this._valueSet = false;
+      },
+
+      /**
+       * Used to compute both `_fromDisplay` and `_toDisplay` from
+       * `from` and `to` respectively.
+       * @param {String} date `YYYY-MM-DD`
+       * @return {String} `Do MMM YYYY`
+       */
+      _computeDisplay: function (date) {
+        if (date)
+          return moment.utc(date, 'YYYY-MM-DD').format('Do MMM YYYY');
+      },
+
+      /** Opens the date range picker */
+      _open: function () {
+        this.$.picker.open();
+      },
+
+      /** Closes the date range picker */
+      _close: function () {
+        this.$.picker.close();
+        this.validate();
+      },
+
+      /** Closes the picker and updates `from` and `to`. */
+      _ok: function () {
+        this.from = this.$.range.from;
+        this.to = this.$.range.to;
+        this._close();
       }
     });
   </script>
