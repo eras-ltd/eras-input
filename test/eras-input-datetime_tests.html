@@ -29,6 +29,15 @@
     </template>
   </test-fixture>
 
+  <test-fixture id='eras-input-datetime-fixture_not-required'>
+    <template is='dom-template'>
+      <eras-input-datetime>
+        <eras-input-datetime-max-validator id='min' max='{{min}}'></eras-input-datetime-max-validator>
+        <eras-input-datetime-min-validator id='max' min='{{max}}'></eras-input-datetime-min-validator>
+      </eras-input-datetime>
+    </template>
+  </test-fixture>
+
   <script>
     suite('eras-input-datetime', function () {
       var el;
@@ -43,6 +52,7 @@
         });
 
         test('attributes', function (done) {
+          assert.equal(true, el.$.date.required, 'expected `required` to have been copied from the validator to `eras-date`');
           assert.equal('2017-12-31 11:30 AM', el.$.date.max, 'expected `max` to have been copied from the validator to `eras-date`');
           assert.equal('2017-01-01 11:30 AM', el.$.date.min, 'expected `min` to have been copied from the validator to `eras-date`');
           done();
@@ -187,6 +197,76 @@
 
             var expected = moment.utc().format('YYYY-MM-DD hh:mm A');
             assert.equal(expected, el.value, 'expected the value to have been set to now');
+            done();
+          });
+        });
+      });
+
+      suite('bugs', function () {
+        // when a date is required and the date is deselected before clicking ok
+        // an invalid date was created by trying to put the date and time together
+        // using moment as date is undefined. fix was to check both date and time 
+        // are defined before updating the value
+        test('invalid date on no selection', function (done) {
+          flush(function () {
+            el._open();
+            // find the selected cell and tap it to deselect
+            var cal = el.$.date.$.calendar;
+            var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
+            var cell = page.querySelector('.cell[selected]');
+            MockInteractions.tap(cell);
+            MockInteractions.tap(el.$.ok);
+
+            assert.equal(true, el.invalid, 'expected input to be invalid');
+            assert.equal(undefined, el._display, 'expected `eras-input-datetime._display` to be `undefinded`');
+
+            done();
+          });
+        });
+
+        // the min/max validation was failing when there is no selection made.
+        // fix was to make the validate functions `if(!value) return true;`
+        test('no selection when none required fails min/max validation', function (done) {
+          el = fixture('eras-input-datetime-fixture_not-required', { min: '2017-12-31 11:30 AM', max: '2017-01-01 11:30 AM' });
+          flush(function () {
+            assert.equal(false, el.$.date.required, 'did not expect a date to be required');
+
+            el._open();
+            MockInteractions.tap(el.$.cancel);
+
+            assert.equal(false, el.invalid, 'did not expect the input to be invalid');
+
+            done();
+          });
+        });
+
+        // this was introduced by the fix to `invalid date on no selection` as 
+        // when no date was selected it just wouldn't update the `value`.
+        // the fix to this was to set `value` to `undefined` when there was no
+        // date. this caused downstream issues with `Invalid date`s when computing
+        // `_display` which was in turn resolved by adding `if(!value) return;` 
+        // to `_computeLocal` and `_computeDisplay`
+        test('deselecting date doesn\'t clear value', function (done) {
+          flush(function () {
+            // open the picker then tap ok to select the default date (today)
+            el._open();
+            MockInteractions.tap(el.$.ok);
+
+            // check that the date has been selected
+            var f = 'YYYY-MM-DD hh:mm A';
+            var actual = moment.utc(el.value, f);
+            var expected = moment.utc();
+            assert(expected.isSame(actual, 'minute'), 'expected `value` to be `' + expected.format(f) + '` not `' + actual.format(f) + '`');            
+
+            // find the selected cell and tap it to deselect
+            var cal = el.$.date.$.calendar;
+            var page = cal.querySelectorAll('eras-calendar-page')[cal._page];
+            var cell = page.querySelector('.cell[selected]');
+            MockInteractions.tap(cell);
+            MockInteractions.tap(el.$.ok);
+            
+            assert.equal(undefined, el.value, 'expected the `el.value` to have been unset');
+            assert.equal(undefined, el._display, 'expected the `el._display` to have been unset');
             done();
           });
         });

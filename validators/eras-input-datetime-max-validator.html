@@ -43,9 +43,13 @@
 
     /**
      * Validates the provided input against `max`
-     * @param String value
+     * @param {String} value
+     * @return {Boolean} `true` for valid, `false` for invalid
      */
     validate: function (value) {
+      if (!value)
+        return true;
+
       var f = 'YYYY-MM-DD hh:mm A';
       var max = moment(this.max, f);
       return moment(value, f).isSameOrBefore(max, this.accuracy);
@@ -71,12 +75,12 @@
     _maxChanged: function (max, prev) {
       if (!max.match(/^\d{4}-\d{2}-\d{2} [01][0-9]:[0-5][0-9] [AP]M$/)) {
         console.warn('`max` must be of `YYYY-MM-DD hh:mm A` format; this is invalid: ' + max);
-        
-        if(prev)
+
+        if (prev)
           this.max = prev;
       }
 
-      this.validatorAttributes = [ { name:'max', value:this.max } ];
+      this.validatorAttributes = [{ name: 'max', value: this.max }];
     },
 
     /** If `past` is true then set `max` to the current datetime. */
