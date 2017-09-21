@@ -111,7 +111,7 @@
          */
         _attributeTargets: {
           type: Array,
-          value: function () { return ['range', 'from',  'to']; }
+          value: function () { return ['range', 'from', 'to']; }
         },
       },
 
@@ -120,23 +120,8 @@
         Polymer.ErasInputBehavior
       ],
 
-      observers: [
-        '_updateValueSet(from, to)',
-        '_updateValueSet(from, \'\')',
-        '_updateValueSet(\'\', to)',
-      ],
-
-      /**
-       * Updates `_valueSet` in response to changes to
-       * `from` or `to`. 
-       * @param {String} from
-       * @param {String} to
-       */
-      _updateValueSet: function (from, to) {
-        if (from || to)
-          this._valueSet = true;
-        else
-          this._valueSet = false;
+      attached: function() {
+        this._valueSet = (this.from || this.to) ? true : false;
       },
 
       /**
@@ -165,8 +150,35 @@
       _ok: function () {
         this.from = this.$.range.from;
         this.to = this.$.range.to;
+        this._valueSet = (this.from || this.to) ? true : false;
         this._close();
-      }
+      },
+
+      /**
+       * Validates the current value of the input against
+       * all supplied validators.
+       * 
+       * *Overrides default `validate` as we need to validate both
+       * `from` and `to`*
+       * @return {Boolean} false if invalid, true if not
+       */
+      validate: function () {
+        for (var i = 0; i < this.validators.length; i++) {
+          var fromInvalid = !this.validators[i].validate(this.from);
+          var toInvalid = !this.validators[i].validate(this.to);
+
+          // not valid
+          if (fromInvalid || toInvalid) {
+            this.invalid = true;
+            this.errorMessage = this.validators[i].message;
+            return false;
+          }
+        }
+
+        // if all validators passed
+        this.invalid = false;
+        return true;
+      },
     });
   </script>
 </dom-module>
