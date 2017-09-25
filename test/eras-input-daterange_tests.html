@@ -13,38 +13,74 @@
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
   <link rel='import' href='../eras-input-daterange.html'>
   <link rel='import' href='../validators/eras-input-required-validator.html'>
+  <link rel='import' href='../validators/eras-input-datetime-min-validator.html'>
+  <link rel='import' href='../validators/eras-input-datetime-max-validator.html'>
 </head>
 
 <body>
   <test-fixture id='eras-input-daterange-fixture'>
     <template is='dom-template'>
-      <eras-input-daterange from$='{{from}}' to$='{{to}}' min$='{{min}}' max$='{{max}}'>
-        <eras-input-required-validator id='validator'></eras-input-required-validator>
+      <eras-input-daterange from$='{{from}}' to$='{{to}}'>
+        <eras-input-required-validator id='required'></eras-input-required-validator>
+        <eras-input-datetime-min-validator id='min' min$='{{min}}'></eras-input-datetime-min-validator>
+        <eras-input-datetime-max-validator id='max' max$='{{max}}'></eras-input-datetime-max-validator>
       </eras-input-daterange>
+    </template>
+  </test-fixture>
+
+  <test-fixture id='eras-input-daterange-fixture_validation'>
+    <template is='dom-template'>
+
+      <eras-input-daterange from$='{{from}}' to$='{{to}}'>
+
+        <template is='dom-if' if='{{required}}'>
+          <eras-input-required-validator id='required'></eras-input-required-validator>
+        </template>
+
+        <template is='dom-if' if='{{min}}'>
+          <eras-input-datetime-min-validator id='min' min$='{{min}}'></eras-input-datetime-min-validator>
+        </template>
+
+        <template is='dom-if' if='{{max}}'>
+          <eras-input-datetime-max-validator id='max' max$='{{max}}'></eras-input-datetime-max-validator>
+        </template>
+
+      </eras-input-daterange>
+
     </template>
   </test-fixture>
 
   <script>
     suite('eras-input-daterange', function () {
+      var min = moment.utc().subtract(5, 'years').format('YYYY-MM-DD');
+      var max = moment.utc().add(5, 'years').format('YYYY-MM-DD');
       var el;
-      var validator;
-
-      setup(function () {
-        el = fixture('eras-input-daterange-fixture', { });
-        validator = el.querySelector('#validator');
-      });
+      var requiredValidator;
+      var minValidator;
+      var maxValidator;
 
       suite('setup', function () {
+        setup(function () {
+          el = fixture('eras-input-daterange-fixture', { min: min, max: max });
+          requiredValidator = el.querySelector('#required');
+          minValidator = el.querySelector('#min');
+          maxValidator = el.querySelector('#max');
+        });
+
         test('instantiation', function (done) {
           assert.equal('eras-input-daterange', el.is);
-          assert.equal('eras-input-required-validator', validator.is);
+          assert.equal('eras-input-required-validator', requiredValidator.is);
+          assert.equal('eras-input-datetime-min-validator', minValidator.is);
+          assert.equal('eras-input-datetime-max-validator', maxValidator.is);
           done();
         });
 
         test('validators', function (done) {
           flush(function () {
-            assert.equal(1, el.validators.length, 'expected 1 validator not ' + el.validators.length);
+            assert.equal(3, el.validators.length, 'expected 3 validators not ' + el.validators.length);
             assert.equal(true, el.$.range.required, 'expected `el.$.range.required` to have been set to `true`');
+            assert.equal(min, el.$.range.min, 'expected `el.$.range.min` to have been set to `' + min + '`');
+            assert.equal(max, el.$.range.max, 'expected `el.$.range.max` to have been set to `' + max + '`');
             done();
           });
         });
@@ -58,12 +94,131 @@
         });
       });
 
-      suite('bugs', function(){
+      suite('validation', function () {
+        var dataTest = function (input, expected) {
+          return function (done) {
+            el = fixture('eras-input-daterange-fixture_validation', input);
+
+            flush(function () {
+              el.validate();
+              assert.equal(expected, !el.invalid, 'expected input to be ' + (expected ? 'valid' : 'invalid'));
+              done();
+            });
+          };
+        };
+
+        var f = 'YYYY-MM-DD';
+        var fl = 'YYYY-MM-DD hh:mm A';
+
+        var data = [
+          {
+            name: 'none required, none provided',
+            input: {},
+            expected: true
+          },
+          {
+            name: 'none required, both provided',
+            input: {
+              from: moment.utc().format(f),
+              to: moment.utc().format(f)
+            },
+            expected: true
+          },
+          {
+            name: 'none required, from provided',
+            input: {
+              from: moment.utc().format(f)
+            },
+            expected: true
+          },
+          {
+            name: 'none required, to provided',
+            input: {
+              to: moment.utc().format(f)
+            },
+            expected: true
+          },
+
+          {
+            name: 'required, none provided',
+            input: {
+              required: true
+            },
+            expected: false
+          },
+          {
+            name: 'required, both provided',
+            input: {
+              from: moment.utc().format(f),
+              to: moment.utc().format(f),
+              required: true
+            },
+            expected: true
+          },
+          {
+            name: 'required, from provided',
+            input: {
+              from: moment.utc().format(f),
+              required: true
+            },
+            expected: false
+          },
+          {
+            name: 'required, to provided',
+            input: {
+              to: moment.utc().format(f),
+              required: true
+            },
+            expected: false
+          },
+          {
+            name: 'both in range',
+            input: {
+              from: moment.utc('2017-09-20',f).format(f),
+              to: moment.utc('2017-09-25',f).format(f),              
+              min: moment.utc('2017-09-01',f).format(fl),
+              max: moment.utc('2017-09-30', f).format(fl)
+            },
+            expected: true
+          },
+          {
+            name: 'from before min',
+            input: {              
+              from: moment.utc('2017-08-20',f).format(f),
+              to: moment.utc('2017-09-25',f).format(f),
+              min: moment.utc('2017-09-01',f).format(fl),
+              max: moment.utc('2017-09-30', f).format(fl)
+            },
+            expected: false
+          },
+          {
+            name: 'to after max',
+            input: {              
+              from: moment.utc('2017-09-20',f).format(f),
+              to: moment.utc('2017-09-30',f).format(f),
+              min: moment.utc('2017-09-01',f).format(fl),
+              max: moment.utc('2017-09-29', f).format(fl)
+            },
+            expected: false
+          },
+        ];
+
+        for (var i = 0; i < data.length; i++)
+          test(data[i].name, dataTest(data[i].input, data[i].expected));
+
+      });
+
+      suite('bugs', function () {
+        setup(function () {
+          el = fixture('eras-input-daterange-fixture', { min: min, max: max });
+          requiredValidator = el.querySelector('#required');
+        });
+
         // issue was that the default implementation of `validate` from `ErasInpuBehavior`
         // tries to validate the `value` property which isn't used here.
         // fix was to override `validate` with a version that validates both `from` and `to`
-        test('all validation fails', function(done){
-          flush(function(){
+        test('all validation fails', function (done) {
+          flush(function () {
             // open the picker and tap ok to select default range
             el._open();
             MockInteractions.tap(el.$.ok);
@@ -74,8 +229,8 @@
             // check that the input is valid
             assert.equal(false, el.invalid, 'expected input to be valid');
             done();
-          });          
-        });        
+          });
+        });
       });
     });
   </script>
