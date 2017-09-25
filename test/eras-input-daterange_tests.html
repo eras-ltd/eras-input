@@ -11,6 +11,7 @@
   <script src='../../web-component-tester/browser.js'></script>
 
   <script src='../bower_components/iron-test-helpers/mock-interactions.js'></script>
+  <script src='../bower_components/moment/moment.js'></script>
   <link rel='import' href='../eras-input-daterange.html'>
   <link rel='import' href='../validators/eras-input-required-validator.html'>
   <link rel='import' href='../validators/eras-input-datetime-min-validator.html'>
@@ -52,8 +53,8 @@
 
   <script>
     suite('eras-input-daterange', function () {
-      var min = moment.utc().subtract(5, 'years').format('YYYY-MM-DD');
-      var max = moment.utc().add(5, 'years').format('YYYY-MM-DD');
+      var min = moment.utc().subtract(5, 'years').format('YYYY-MM-DD hh:mm A');
+      var max = moment.utc().add(5, 'years').format('YYYY-MM-DD hh:mm A');
       var el;
       var requiredValidator;
       var minValidator;
