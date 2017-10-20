@@ -21,7 +21,7 @@
 <dom-module id='eras-input-daterange'>
   <template>
     <style include='iron-flex iron-flex-alignment eras-input-icon-styles eras-input-dialog-styles'>
-       :host {
+      :host {
         display: block;
       }
 
@@ -45,7 +45,9 @@
     </paper-dialog>
 
     <paper-input-container id='container' invalid$='{{invalid}}' disabled$='{{disabled}}' always-float-label$='{{_valueSet}}'>
-      <paper-icon-button id='icon' icon='date-range' prefix on-tap='_open'></paper-icon-button>
+      <template is='dom-if' if='{{icon}}'>
+        <paper-icon-button id='icon' icon='date-range' prefix on-tap='_open'></paper-icon-button>
+      </template>
 
       <template is='dom-if' if='{{label}}'>
         <label>{{label}}</label>
@@ -72,6 +74,12 @@
       properties: {
         /** The start of the date range `YYYY-MM-DD` */
         from: String,
+
+        /** Name of the icon to prefix this input with. *Optional* */
+        icon: {
+          type: String,
+          value: 'date-range'
+        },
 
         /**
          * Computed from `from` formated for display
