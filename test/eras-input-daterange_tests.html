@@ -298,7 +298,7 @@
           requiredValidator = el.querySelector('#required');
         });
 
-        // issue was that the default implementation of `validate` from `ErasInpuBehavior`
+        // issue was that the default implementation of `validate` from `ErasInputBehavior`
         // tries to validate the `value` property which isn't used here.
         // fix was to override `validate` with a version that validates both `from` and `to`
         test('all validation fails', function (done) {

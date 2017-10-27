@@ -51,7 +51,7 @@
           done();
         });
 
-        test('accuracy coersion', function (done) {
+        test('accuracy coercion', function (done) {
           el.accuracy = 'xxx';
           assert(warn.calledOnce, 'expected `console.warn()` to have been called once');
           assert.equal(el.accuracy, 'minute', 'expected `el.accuracy` to have been set to `minute` not `' + el.accuracy + '`');
