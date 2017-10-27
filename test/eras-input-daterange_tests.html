@@ -95,6 +95,89 @@
         });
       });
 
+      suite('events', function () {
+        var long = 'YYYY-MM-DD hh:mm A';
+        var short = 'YYYY-MM-DD';
+        var spy;
+        var from = moment.utc().subtract(5, 'days').format(long);
+        var to = moment.utc().add(5, 'days').format(long);
+
+        setup(function () {
+          el = fixture('eras-input-daterange-fixture', { min: min, max: max, from: from, to: to });
+          spy = sinon.spy(el, 'fire').withArgs('eras-input-value-changed');
+        });
+
+        teardown(function () {
+          el.fire.restore();
+        });
+
+        test('from changed', function (done) {
+          var newValue = moment.utc().format(long);
+          el._open();
+          el.from = newValue;
+          el._ok();
+          
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+
+          var expectedFrom = moment.utc(newValue, short).format(short);
+          var expectedTo = moment.utc(to, short).format(short);
+          var actualFrom = moment.utc(spy.args[0][1].value.from, short).format(short);
+          var actualTo = moment.utc(spy.args[0][1].value.to, short).format(short);
+
+          assert.equal(expectedFrom, actualFrom, 'expected `value.from` to be `' + expectedFrom + '` not `' + actualFrom + '`');
+          assert.equal(expectedTo, actualTo, 'expected `value.to` to be `' + expectedTo + '` not `' + actualTo + '`');
+
+          done();
+        });
+
+        test('to changed', function (done) {
+          var newValue = moment.utc().format(long);
+          el._open();
+          el.to = newValue;
+          el._ok();
+          
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+
+          var expectedFrom = moment.utc(from, short).format(short);
+          var expectedTo = moment.utc(newValue, short).format(short);
+          var actualFrom = moment.utc(spy.args[0][1].value.from, short).format(short);
+          var actualTo = moment.utc(spy.args[0][1].value.to, short).format(short);
+          
+          assert.equal(expectedFrom, actualFrom, 'expected `value.from` to be `' + expectedFrom + '` not `' + actualFrom + '`');
+          assert.equal(expectedTo, actualTo, 'expected `value.to` to be `' + expectedTo + '` not `' + actualTo + '`');
+
+          done();
+        });
+
+        test('both changed', function (done) {
+          var newFrom = moment.utc().subtract(1, 'day').format(long);
+          var newTo = moment.utc().add(1, 'day').format(long);  
+          el._open();      
+          el.from = newFrom;
+          el.to = newTo;          
+          el._ok();
+
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+
+          var expectedFrom = moment.utc(newFrom, short).format(short);
+          var expectedTo = moment.utc(newTo, short).format(short);
+          var actualFrom = moment.utc(spy.args[0][1].value.from, short).format(short);
+          var actualTo = moment.utc(spy.args[0][1].value.to, short).format(short);
+          
+          assert.equal(expectedFrom, actualFrom, 'expected `value.from` to be `' + expectedFrom + '` not `' + actualFrom + '`');
+          assert.equal(expectedTo, actualTo, 'expected `value.to` to be `' + expectedTo + '` not `' + actualTo + '`');
+
+          done();
+        });
+
+        test('neither changed', function (done) {       
+          el._open();  
+          el._ok();
+          assert(spy.notCalled, 'did not expect `eras-input-value-changed` to have been fired, but was ' + spy.callCount + ' times');
+          done();
+        });
+      });
+
       suite('validation', function () {
         var dataTest = function (input, expected) {
           return function (done) {
@@ -175,29 +258,29 @@
           {
             name: 'both in range',
             input: {
-              from: moment.utc('2017-09-20',f).format(f),
-              to: moment.utc('2017-09-25',f).format(f),              
-              min: moment.utc('2017-09-01',f).format(fl),
+              from: moment.utc('2017-09-20', f).format(f),
+              to: moment.utc('2017-09-25', f).format(f),
+              min: moment.utc('2017-09-01', f).format(fl),
               max: moment.utc('2017-09-30', f).format(fl)
             },
             expected: true
           },
           {
             name: 'from before min',
-            input: {              
-              from: moment.utc('2017-08-20',f).format(f),
-              to: moment.utc('2017-09-25',f).format(f),
-              min: moment.utc('2017-09-01',f).format(fl),
+            input: {
+              from: moment.utc('2017-08-20', f).format(f),
+              to: moment.utc('2017-09-25', f).format(f),
+              min: moment.utc('2017-09-01', f).format(fl),
               max: moment.utc('2017-09-30', f).format(fl)
             },
             expected: false
           },
           {
             name: 'to after max',
-            input: {              
-              from: moment.utc('2017-09-20',f).format(f),
-              to: moment.utc('2017-09-30',f).format(f),
-              min: moment.utc('2017-09-01',f).format(fl),
+            input: {
+              from: moment.utc('2017-09-20', f).format(f),
+              to: moment.utc('2017-09-30', f).format(f),
+              min: moment.utc('2017-09-01', f).format(fl),
               max: moment.utc('2017-09-29', f).format(fl)
             },
             expected: false
@@ -227,6 +310,7 @@
             // check that a range has been selected
             assert.notEqual(undefined, el.from, 'expected a value to be set for `from`');
             assert.notEqual(undefined, el.to, 'expected a value to be set for `to`');
+
             // check that the input is valid
             assert.equal(false, el.invalid, 'expected input to be valid');
             done();

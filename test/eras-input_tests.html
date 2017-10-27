@@ -28,7 +28,7 @@
     suite('eras-input', function () {
       var form;
       var el;
-      var stub;
+      var stub;      
 
       setup(function () {
         form = fixture('eras-input-fixture');
@@ -61,6 +61,35 @@
         el.value = 'anything';
         assert(stub.calledTwice, 'expected validate to have been called twice');
         done();
+      });
+
+      suite('events', function () {
+        var spy;
+
+        setup(function () {
+          spy = sinon.spy(el, 'fire').withArgs('eras-input-value-changed');
+        });
+
+        teardown(function () {
+          el.fire.restore();
+        });
+
+        test('value changed', function (done) {
+          var expected = 'expected';
+          el.value = expected;
+          MockInteractions.blur(el.$.input);
+
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+          assert.equal(expected, spy.args[0][1].value);
+          done();
+        });
+
+        test('value not changed', function (done) {
+          MockInteractions.focus(el.$.input);
+          MockInteractions.blur(el.$.input);
+          assert(spy.notCalled, 'did not expect `eras-input-value-changed` to have been fired but was ' + spy.callCount + ' times');
+          done();
+        });
       });
 
       // checks the behaviour of `iron-form` with different responses from `validate()`

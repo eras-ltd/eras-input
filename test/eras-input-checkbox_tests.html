@@ -31,7 +31,7 @@
     suite('eras-input-checkbox', function () {
       var form;
       var checkbox;
-      var validator;
+      var validator;      
 
       setup(function () {
         form = fixture('eras-input-checkbox-fixture');
@@ -43,6 +43,25 @@
         assert.equal(form.is, 'iron-form');
         assert.equal(checkbox.is, 'eras-input-checkbox');
         assert.equal(validator.is, 'eras-input-checkbox-required-validator');
+      });
+
+      suite('events', function () {
+        var spy;
+        
+        setup(function () {
+          spy = sinon.spy(checkbox, 'fire').withArgs('eras-input-value-changed');
+        });
+
+        teardown(function () {
+          checkbox.fire.restore();
+        });
+
+        test('eras-input-value-changed', function (done) {
+          MockInteractions.tap(checkbox.$.input);
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+          assert.equal(true, spy.args[0][1].value);
+          done();
+        });
       });
 
       suite('validation', function () {
@@ -74,7 +93,7 @@
           done();
         });
 
-        test('message', function(done){
+        test('message', function (done) {
           checkbox.value = false;
           validator.message = 'ERROR';
           checkbox.validate();

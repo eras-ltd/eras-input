@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <script>
   /**
-   * Implement this behavior to create input elements that can be 
+   * Implement this behavior to create input elements that can be
    * validated using elements implementing `Polymer.ErasInputValidatorBehavior`
    *
    * You **must** include an element with that has `id='input'` as an attribute
@@ -20,7 +20,7 @@
         reflectToAttribute: true
       },
 
-      /** 
+      /**
        * The name of this input that will be associated with the value
        * when submitted.
        */
@@ -43,7 +43,7 @@
         notify: true
       },
 
-      /**  
+      /**
        * States whether or not the value will be validated upon every change.
        * Gets set to true in `ready()` and `_onBlur()`
        */
@@ -90,7 +90,17 @@
        */
       _attributeTargets: {
         type: Array,
-        value: function() { return []; }
+        value: function () { return []; }
+      },
+
+      /**
+       * Set when editing begins, to be used for comparison to see if any
+       * changes have been made
+       * @type {Object}
+       */
+      _start: {
+        type: Object,
+        value: null
       },
     },
 
@@ -114,23 +124,23 @@
     _registerValidator: function (e) {
       var validator = e.detail.validator;
       validator.parentInput = this;
-      this.validators.push(validator);      
+      this.validators.push(validator);
     },
 
     /**
-     * Listens for the `eras-input-validator-attributes-changed` event 
+     * Listens for the `eras-input-validator-attributes-changed` event
      * fired by validators implementing `eras-input-validator-behavior`
      * when they need to update the attributes on the parent input.
      * Loops through all attribute targets and attributes setting each.
      * @param {Event} e `eras-input-validator-behavior`
      */
-    _copyAttributes: function(e) {
+    _copyAttributes: function (e) {
       var validator = e.detail.validator;
-      for (var t = 0; t < this._attributeTargets.length; t++) {        
+      for (var t = 0; t < this._attributeTargets.length; t++) {
         var target = this._attributeTargets[t];
         for (var a = 0; a < validator.validatorAttributes.length; a++) {
           var attribute = validator.validatorAttributes[a];
-          this.querySelector('#'+target).setAttribute(attribute.name, attribute.value);          
+          this.querySelector('#' + target).setAttribute(attribute.name, attribute.value);
         }
       }
     },
@@ -154,23 +164,42 @@
     },
 
     /**
-     * Called when the user clicks off this element. 
+     * Called when the user clicks on this element.
+     * Saves the initial value for comparison later.
+     */
+    _onFocus: function() {
+      this._start = this.value;
+    },
+
+    /**
+     * Called when the user clicks off this element.
      * Sets `autoValidate` to true and calls `validate()`.
+     * Finally checks if the value has changed and fires
+     * `eras-input-value-changed` if it has.
      */
     _onBlur: function () {
       this.autoValidate = true;
       this.validate();
+
+      if(this.value != this._start)
+        this.fire('eras-input-value-changed', { value: this.value });
     },
 
     /**
-     * If `autoValidate` is set to true then calls `validate()` 
+     * If `autoValidate` is set to true then calls `validate()`
      * on every change to `value`
-     * @param {Object} value       
+     * @param {Object} value
      */
     _valueChanged: function (value) {
       if (this.autoValidate)
         this.validate();
     },
+
+    /**
+     * Fired when the value of the input has been changed
+     * @event eras-input-value-changed
+     * @param {{value:Object}} detail
+     */
   }
 
 </script>

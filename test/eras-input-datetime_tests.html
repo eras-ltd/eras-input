@@ -21,7 +21,7 @@
 <body>
   <test-fixture id='eras-input-datetime-fixture'>
     <template is='dom-template'>
-      <eras-input-datetime>
+      <eras-input-datetime value='{{value}}'>
         <eras-input-required-validator id='req'></eras-input-required-validator>
         <eras-input-datetime-max-validator id='min' max='{{min}}'></eras-input-datetime-max-validator>
         <eras-input-datetime-min-validator id='max' min='{{max}}'></eras-input-datetime-min-validator>
@@ -65,6 +65,43 @@
             assert.notEqual(undefined, el.$.date.value, 'expected `value` to have been given a default value');
             done();
           });
+        });
+      });
+
+      suite('events', function(){
+        var min;
+        var max;
+        var now;
+        var f = 'YYYY-MM-DD hh:mm A';
+
+        setup(function(){          
+          min = moment.utc().subtract(1, 'week').format(f);
+          max = moment.utc().add(1, 'week').format(f);
+          now = moment.utc().format(f);
+          el = fixture('eras-input-datetime-fixture', { min: min, max: max, value: now });
+          spy = sinon.spy(el, 'fire').withArgs('eras-input-value-changed');
+        });
+
+        teardown(function(){
+          el.fire.restore();
+        });
+        
+        test('value changed', function (done) {
+          var expected = moment().add(1, 'day');
+          el._open();
+          el.$.date.value = expected.add(1, 'day').format('YYYY-MM-DD');
+          el.$.time.value = expected.format('hh:mm A');
+          el._ok();
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+          assert.equal(expected.utc().format(f), spy.args[0][1].value);
+          done();
+        });
+
+        test('value not changed', function (done) {
+          el._open();
+          el._ok();
+          assert(spy.notCalled, 'did not expect `eras-input-value-changed` to have been fired but was ' + spy.callCount + ' times');
+          done();
         });
       });
 

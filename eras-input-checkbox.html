@@ -98,7 +98,7 @@ Property|Description|Default
       properties: {
         /**
          * Whether or not this element is checked.
-         * `true` if checked, `false if not.         
+         * `true` if checked, `false` if not.         
          */
         value: {
           type: Boolean,
@@ -121,6 +121,7 @@ Property|Description|Default
       _onChange: function (e) {
         this.value = e.target.checked;
         this.validate();
+        this.fire('eras-input-value-changed', { value: this.value });
       }
     });
   </script>

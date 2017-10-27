@@ -21,7 +21,7 @@
 <dom-module id='eras-input-datetime'>
   <template>
     <style include='eras-input-icon-styles eras-input-dialog-styles'>
-       :host {
+      :host {
         display: block;
       }
 
@@ -33,11 +33,11 @@
         cursor: pointer;
       }
 
-       :host[invalid] #container paper-icon-button {
+      :host[invalid] #container paper-icon-button {
         color: var(--error-color);
       }
 
-       :host:not([show-time]) eras-time {
+      :host:not([show-time]) eras-time {
         display: none;
       }
     </style>
@@ -113,7 +113,7 @@
         _attributeTargets: {
           type: Array,
           value: function () { return ['input', 'date']; }
-        },
+        }
       },
 
       behaviors: [
@@ -127,7 +127,7 @@
        * @return {String} `YYYY-MM-DD hh:mm A` UTC
        */
       _computeLocal: function (value) {
-        if(!value)
+        if (!value)
           return;
 
         return moment.utc(value, 'YYYY-MM-DD hh:mm A').local().format('YYYY-MM-DD hh:mm A')
@@ -139,8 +139,8 @@
        * @return {String} `Do MMM YYYY hh:mm A` display
        */
       _computeDisplay: function (local) {
-        if(!local)
-          return; 
+        if (!local)
+          return;
 
         var m = moment(local, 'YYYY-MM-DD hh:mm A');
 
@@ -170,6 +170,7 @@
 
       /** Opens the datetime picker */
       _open: function () {
+        this._start = this.value;
         this.$.picker.open();
       },
 
@@ -186,12 +187,15 @@
       _ok: function () {
         var date = this.$.date.value;
         var time = this.$.time.value;
-        
-        if(date && time)
+
+        if (date && time)
           this.value = moment(date + ' ' + time, 'YYYY-MM-DD hh:mm A').utc().format('YYYY-MM-DD hh:mm A');
-        else  
+        else
           this.value = undefined;
-          
+
+        if (this.value != this._start)
+          this.fire('eras-input-value-changed', { value: this.value });
+
         this._close();
       }
     });

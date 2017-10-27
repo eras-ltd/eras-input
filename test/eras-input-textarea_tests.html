@@ -34,45 +34,75 @@
         validateSpy = sinon.spy(el, 'validate');
       });
 
-      teardown(function(){
+      teardown(function () {
         el.validate.restore();
       });
-      
+
       test('instantiation', function () {
         assert.equal(el.is, 'eras-input-textarea');
       });
 
-      test('validate on blur', function(done){
+      test('validate on blur', function (done) {
         MockInteractions.blur(el.$.input);
         assert(validateSpy.calledOnce, 'expected validate to have been called once');
         done();
       });
 
-      test('no auto validate before blur', function(done){
+      test('no auto validate before blur', function (done) {
         el.value = 'anything';
         assert(validateSpy.notCalled, 'did not expect validate to have been called');
         done();
       });
 
-      test('auto validate after blur', function(done){
+      test('auto validate after blur', function (done) {
         MockInteractions.blur(el.$.input);
         el.value = 'anything';
         assert(validateSpy.calledTwice, 'expected validate to have been called twice');
         done();
       });
 
-      test('invalid', function(done){
+      test('invalid', function (done) {
         el.value = 'short';
         el.validate();
         assert.equal(true, el.invalid, 'expected the input to be invalid');
         done();
       });
 
-      test('valid', function(done){
-        el.value = 'Lorem ipsum dolor sit amet'; 
+      test('valid', function (done) {
+        el.value = 'Lorem ipsum dolor sit amet';
         el.validate();
         assert.equal(false, el.invalid, 'expected the input to be valid');
         done();
+      });
+
+      suite('events', function () {
+        var spy;
+
+        setup(function () {
+          spy = sinon.spy(el, 'fire').withArgs('eras-input-value-changed');
+        });
+
+        teardown(function () {
+          el.fire.restore();
+        });
+
+        test('value changed', function (done) {
+          var expected = 'Lorem ipsum dolor sit amet';
+          MockInteractions.focus(el.$.input);
+          el.value = expected;
+          MockInteractions.blur(el.$.input);
+
+          assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
+          assert.equal(expected, spy.args[0][1].value);
+          done();
+        });
+
+        test('value not changed', function (done) {
+          MockInteractions.focus(el.$.input);
+          MockInteractions.blur(el.$.input);
+          assert(spy.notCalled, 'did not expect `eras-input-value-changed` to have been fired but was ' + spy.callCount + ' times');
+          done();
+        });
       });
     });
 

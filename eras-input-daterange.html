@@ -105,7 +105,6 @@
         /**
          * Whether `from` **or** `to` have a value. Used to float
          * the label when any value is set.
-         * Updated by `_updateValueSet` when `from` or `to` are changed.
          */
         _valueSet: {
           type: Boolean,
@@ -120,7 +119,7 @@
         _attributeTargets: {
           type: Array,
           value: function () { return ['range', 'from', 'to']; }
-        },
+        },        
       },
 
       behaviors: [
@@ -145,6 +144,7 @@
 
       /** Opens the date range picker */
       _open: function () {
+        this._start = { from: this.from, to: this.to };
         this.$.picker.open();
       },
 
@@ -154,10 +154,21 @@
         this.validate();
       },
 
-      /** Closes the picker and updates `from` and `to`. */
+      /**
+       * Updated `from` and `to` from `this.$.range` then fires a 
+       * `eras-input-value-changed` event before closing the picker.
+       * 
+       * **Important:** the event will always be fired regardless of 
+       * whether or not the values have changed as this was much simpler 
+       * than trying to check if either had changed
+       */
       _ok: function () {
         this.from = this.$.range.from;
-        this.to = this.$.range.to;
+        this.to = this.$.range.to;                    
+
+        if(this.from != this._start.from || this.to != this._start.to)
+          this.fire('eras-input-value-changed', { value: { from: this.from, to: this.to } });  
+
         this._valueSet = (this.from || this.to) ? true : false;
         this._close();
       },
@@ -165,7 +176,7 @@
       /**
        * Validates the current value of the input against
        * all supplied validators.
-       * 
+       *
        * *Overrides default `validate` as we need to validate both
        * `from` and `to`*
        * @return {Boolean} false if invalid, true if not
