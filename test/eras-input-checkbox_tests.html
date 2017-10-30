@@ -30,18 +30,18 @@
   <script>
     suite('eras-input-checkbox', function () {
       var form;
-      var checkbox;
+      var el;
       var validator;      
 
       setup(function () {
         form = fixture('eras-input-checkbox-fixture');
-        checkbox = form.querySelector('#checkbox');
-        validator = checkbox.querySelector('#validator');
+        el = form.querySelector('#checkbox');
+        validator = el.querySelector('#validator');
       });
 
       test('instantiation', function () {
         assert.equal(form.is, 'iron-form');
-        assert.equal(checkbox.is, 'eras-input-checkbox');
+        assert.equal(el.is, 'eras-input-checkbox');
         assert.equal(validator.is, 'eras-input-checkbox-required-validator');
       });
 
@@ -49,15 +49,15 @@
         var spy;
         
         setup(function () {
-          spy = sinon.spy(checkbox, 'fire').withArgs('eras-input-value-changed');
+          spy = sinon.spy(el, 'fire').withArgs('eras-input-value-changed');
         });
 
         teardown(function () {
-          checkbox.fire.restore();
+          el.fire.restore();
         });
 
         test('eras-input-value-changed', function (done) {
-          MockInteractions.tap(checkbox.$.input);
+          MockInteractions.tap(el.$.input);
           assert(spy.calledOnce, 'expected `eras-input-value-changed` to have been fired once not ' + spy.callCount + ' times');
           assert.equal(true, spy.args[0][1].value);
           done();
@@ -65,39 +65,40 @@
       });
 
       suite('validation', function () {
+
         test('valid', function (done) {
-          checkbox.value = true;
-          var valid = checkbox.validate();
+          el.value = true;
+          var valid = el.validate();
           assert.equal(true, valid, 'expected checkbox to be valid when checked');
           done();
         });
 
         test('invalid', function (done) {
-          checkbox.value = false;
-          var valid = checkbox.validate();
+          el.value = false;
+          var valid = el.validate();
           assert.equal(false, valid, 'expected checkbox to be invalid when unchecked');
           done();
         });
 
         test('form valid', function (done) {
-          checkbox.value = true;
+          el.value = true;
           var valid = form.validate();
           assert.equal(true, valid, 'expected form to be valid when checked');
           done();
         });
 
         test('form invalid', function (done) {
-          checkbox.value = false;
+          el.value = false;
           var valid = form.validate();
           assert.equal(false, valid, 'expected form to be invalid when unchecked');
           done();
         });
 
         test('message', function (done) {
-          checkbox.value = false;
+          el.value = false;
           validator.message = 'ERROR';
-          checkbox.validate();
-          assert.equal('ERROR', checkbox.errorMessage, 'expected the error message to have been copied from validator to checkbox');
+          el.validate();
+          assert.equal('ERROR', el.errorMessage, 'expected the error message to have been copied from validator to checkbox');
           done();
         });
       });

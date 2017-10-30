@@ -124,7 +124,7 @@
     _registerValidator: function (e) {
       var validator = e.detail.validator;
       validator.parentInput = this;
-      this.validators.push(validator);
+      this.push('validators', validator);
     },
 
     /**

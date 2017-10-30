@@ -22,7 +22,7 @@ Property|Description|Default
 <dom-module id='eras-input-checkbox'>
   <template>
     <style include='iron-flex iron-flex-alignment'>
-       :host {
+      :host {
         display: block;
         padding: 8px 0;
       }
@@ -58,24 +58,24 @@ Property|Description|Default
         line-height: 20px;
       }
 
-       :host[invalid] paper-checkbox {
+      :host[invalid] paper-checkbox {
         --paper-checkbox-unchecked-color: var(--error-color);
       }
 
-       :host[invalid] iron-label {
+      :host[invalid] iron-label {
         color: var(--error-color);
         border-bottom-color: var(--error-color);
       }
 
-       :host[invalid] #subtitle {
+      :host[invalid] #subtitle {
         color: var(--error-color);
       }
 
-       :host[invalid] #error-message span {
+      :host[invalid] #error-message span {
         display: inline;
       }
     </style>
-    
+
     <iron-label class='layout horizontal center'>
       <paper-checkbox id='input' iron-label-target checked$='{{value}}' disabled$='{{disabled}}' on-change='_onChange' invalid$='{{invalid}}'></paper-checkbox>
       <div id='label'>
@@ -85,9 +85,11 @@ Property|Description|Default
         </template>
       </div>
     </iron-label>
-    <div id="error-message">
-      <span>{{errorMessage}}</span>
-    </div>
+    <template is='dom-if' if='{{validators.length}}'>
+      <div id="error-message">
+        <span>{{errorMessage}}</span>
+      </div>
+    </template>
     <input type='hidden' name='{{name}}' value='{{value}}'>
 
     <content></content>
@@ -108,6 +110,7 @@ Property|Description|Default
         /** Text to be displayed under the label. */
         subtitle: String
       },
+
       behaviors: [
         Polymer.IronFormElementBehavior,
         Polymer.ErasInputBehavior
